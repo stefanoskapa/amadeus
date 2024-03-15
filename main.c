@@ -160,7 +160,7 @@ int mini_max(int depth) {
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
 
-  if (depth == 0)
+  if (depth == 0 || new_moves.current_index == 0)
     return evaluate(&new_moves);
 
   int best, score;
@@ -243,7 +243,7 @@ int evaluate(moves* m_list) {
   int sideSign = pos_side ? -1 : 1;
   if (m_list->current_index == 0) {
     if (isKingInCheck(pos_side))
-      return pos_side ? INT_MAX : INT_MIN; //checkmate
+      return pos_side ? 9999 : -9999; //checkmate
     else
       return 0; //stalemate
   }
