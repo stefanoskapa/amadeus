@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 #include "spark.h"
 #define CENTER  ((1ULL << e4) | (1ULL << d4) | (1ULL << e5) | (1ULL << d5))
 
@@ -11,6 +12,7 @@ int mat_balance();
 int mini_max(int depth);
 int find_best_move(int depth);
 int positional_score();
+FILE* logFile = NULL;
 
 int piece_value[] = { 
   [P] = 10, [p] = -10,
@@ -23,15 +25,102 @@ int piece_value[] = {
 
 int main(void) {
   init_attack_tables();
-  
-  starting_pos();
-  show_board();
-  play(5);
+  openLog();
+    
+
+  uci();
+  //starting_pos();
+  //show_board();
+  //play(5);
 }
 
+
+
+void uci() {
+
+
+  char line[256];
+    while (fgets(line, sizeof(line), stdin)) {
+      logMessage(line);    
+      if (strncmp(line, "uci", 3) == 0) {
+        printf("id name Amadeus\n");
+        printf("id author StefanosKapa\n");
+        printf("uciok\n");
+	fflush(stdout);
+      } else if (strncmp(line, "isready", 7) == 0) {
+        printf("readyok\n");
+	fflush(stdout);
+      } else if (strncmp(line, "go", 2) == 0) {     
+        int move = find_best_move(4);
+	printf("bestmove ");
+	print_move_UCI(move);
+	fflush(stdout);
+      } else if (strncmp(line, "position", 8) == 0) {
+            // Handle setting up the board and moves
+          
+	  if (strstr(line, "startpos")) {
+	    starting_pos();
+	  }   
+	  if (strstr(line, "moves")) {
+            parseMoves(line); // Parse and apply the moves
+          }	
+      } else if (strncmp(line, "ucinewgame", 10) == 0) {
+        starting_pos();	      
+      } else if (strncmp(line, "quit", 4) == 0) {
+            break;
+      }
+        // Handle other commands here
+    }
+
+}
 void starting_pos() {
   parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+  
 }
+
+void parseMoves(char* input) {
+    // Assuming input is "position startpos moves e2e4 e7e5 g1f3 ..."
+    char* token = strtok(input, " "); // Tokenize the input string by spaces
+
+    // Skip tokens until we find "moves"
+    while (token != NULL && strcmp(token, "moves") != 0) {
+        token = strtok(NULL, " ");
+    }
+
+    // Now, token points to "moves", so we start parsing the actual moves
+    while (token != NULL) {
+        token = strtok(NULL, " "); // Get the next move
+        int move = 0;
+	if (token != NULL) {
+          //logic
+	  //
+	  moves temp = {{0},0};
+	  generate_moves(&temp);
+           
+	  char result[5];
+	  for (int i = 0; i < temp.current_index; i++) { //iterate over generated moves 
+	  
+	    move = temp.moves[i];
+	    int source = get_move_source(move);
+	    int target = get_move_target(move);
+	    result[0] = '\0';
+	    strcat(result, square_to_coordinates[source]);
+	    strcat(result, square_to_coordinates[target]);
+	    if (strncmp(token, result,4) == 0) {
+		    break;
+	    } 
+	  }
+          if (move == 0)
+	    logMessage("could not find move!\n");
+	  else { 
+            make_move(move);
+	  }
+	
+	}
+
+    }
+}
+
 
 int play(int depth) {
   while(1) {
@@ -160,4 +249,26 @@ int evaluate(moves* m_list) {
   }
 
   return mat_balance() + positional_score();
+
+}
+
+void openLog() {
+    logFile = fopen("engine_log.txt", "w");
+    if (logFile == NULL) {
+        perror("Failed to open log file");
+        exit(1);
+    }
+}
+
+void closeLog() {
+    if (logFile) {
+        fclose(logFile);
+    }
+}
+
+void logMessage(const char* message) {
+    if (logFile) {
+        fprintf(logFile, "%s\n", message);
+        fflush(logFile); // Ensure the message is written immediately
+    }
 }
