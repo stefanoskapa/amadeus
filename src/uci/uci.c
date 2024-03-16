@@ -34,7 +34,8 @@ void uci() {
       } else if (strncmp(line, "ucinewgame", 10) == 0) {
             parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
       } else if (strncmp(line, "quit", 4) == 0) {
-            break;
+        closeLog();    
+        break;
       }
       
     }
@@ -80,18 +81,14 @@ void parseMoves(char* input) {
 	    
 	    move = temp.moves[i];
 	    result = get_move_UCI(move);
-	    printf("comparing %s with %s\n", result, token);
 	    int j = get_move_ep(move) ? 5 : 4;
 	    if (strncmp(token, result, j) == 0) {
-	      printf("they are equal\n");
-		    break;
+	      break;
 	    } 
 	  }
           if (move == 0)
 	    logMessage("could not find move!\n");
 	  else {
-            show_board();
-            print_move_UCI(move); 
             make_move(move);
 	  }
 	
