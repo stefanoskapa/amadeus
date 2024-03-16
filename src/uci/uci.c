@@ -19,10 +19,8 @@ void uci() {
         uci_send("id name Amadeus\n");
         uci_send("id author StefanosKapa\n");
         uci_send("uciok\n");
-	fflush(stdout);
       } else if (strncmp(line, "isready", 7) == 0) {
         uci_send("readyok\n");
-	fflush(stdout);
       } else if (strncmp(line, "go", 2) == 0) {     
         int move = find_best_move(6);
 	uci_send_bestmove(move);
@@ -42,26 +40,23 @@ void uci() {
     }
 
 }
-void starting_pos() {
-  parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
   
-}
-
 void uci_send(char* content) {
   
   logMessage(content);
   printf("%s\n", content);
-
+  
+  fflush(stdout);
 }
 
 void uci_send_bestmove(int move) {
-
-  printf("bestmove ");
-  print_move_UCI(move);
-  logMessage("bestmove \n");
-  fflush(stdout);
-
+  const char *str1 = "bestmove ";
+  const char *str2 = get_move_UCI(move);
+  char result[16]; 
+  sprintf(result, "%s%s", str1, str2);
+  uci_send(result);
 }
+
 void parseMoves(char* input) {
     
     char* token = strtok(input, " "); // Tokenize the input string by spaces
