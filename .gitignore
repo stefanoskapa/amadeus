@@ -1,0 +1,4 @@
+engine.log
+*.o
+build/**
+
