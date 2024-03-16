@@ -75,22 +75,23 @@ void parseMoves(char* input) {
 	  moves temp = {{0},0};
 	  generate_moves(&temp);
            
-	  char result[5];
+	  char* result;
 	  for (int i = 0; i < temp.current_index; i++) {
-	  
+	    
 	    move = temp.moves[i];
-	    int source = get_move_source(move);
-	    int target = get_move_target(move);
-	    result[0] = '\0';
-	    strcat(result, square_to_coordinates[source]);
-	    strcat(result, square_to_coordinates[target]);
-	    if (strncmp(token, result,4) == 0) {
+	    result = get_move_UCI(move);
+	    printf("comparing %s with %s\n", result, token);
+	    int j = get_move_ep(move) ? 5 : 4;
+	    if (strncmp(token, result, j) == 0) {
+	      printf("they are equal\n");
 		    break;
 	    } 
 	  }
           if (move == 0)
 	    logMessage("could not find move!\n");
-	  else { 
+	  else {
+            show_board();
+            print_move_UCI(move); 
             make_move(move);
 	  }
 	

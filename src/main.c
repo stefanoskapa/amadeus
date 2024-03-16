@@ -24,9 +24,7 @@ int piece_value[] = {
 
 int main(void) {
   init_attack_tables();
-  openLog();
     
-
   uci();
   //starting_pos();
   //show_board();
@@ -131,7 +129,6 @@ int mini_max_ab(int depth, int alpha, int beta) {
       score = mini_max_ab(depth - 1, alpha, beta);
       best = max(best, score);
       alpha = max(alpha, best);
-    
     
       takeback();
       if (beta <= alpha){
