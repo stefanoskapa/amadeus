@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
-#include "spark.h"
+#include <time.h>
+#include <math.h>
+#include "../lib/spark.h"
 #define CENTER  ((1ULL << e4) | (1ULL << d4) | (1ULL << e5) | (1ULL << d5))
 
 
@@ -13,7 +15,9 @@ int mini_max(int depth);
 int find_best_move(int depth);
 int positional_score();
 FILE* logFile = NULL;
-
+clock_t start, end;
+double time_used;
+int cutoffs;
 int piece_value[] = { 
   [P] = 10, [p] = -10,
   [N] = 30, [n] = -30,
@@ -31,7 +35,7 @@ int main(void) {
   uci();
   //starting_pos();
   //show_board();
-  //play(5);
+  //play(7);
 }
 
 
@@ -51,7 +55,7 @@ void uci() {
         printf("readyok\n");
 	fflush(stdout);
       } else if (strncmp(line, "go", 2) == 0) {     
-        int move = find_best_move(4);
+        int move = find_best_move(6);
 	printf("bestmove ");
 	print_move_UCI(move);
 	fflush(stdout);
@@ -124,14 +128,21 @@ void parseMoves(char* input) {
 
 int play(int depth) {
   while(1) {
-    int move = find_best_move(depth);
+    cutoffs = 0;
+	  start = clock();
+	  int move = find_best_move(depth);
+    end = clock();
     if (move == 0)
       break;
     make_move(move);
    
    print_move_UCI(move);
     show_board();
-
+    
+    time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
+    
+    printf("Time: %f ms\n", time_used);
+    printf("Cutoffs %d\n", cutoffs);
   } 
 }
 
@@ -145,18 +156,22 @@ int find_best_move(int depth) {
    
   for (int i = 0; i < available_moves.current_index; i++) {
       make_move(available_moves.moves[i]);
-      score = mini_max(depth - 1);
+      score = mini_max_ab(depth - 1, INT_MIN, INT_MAX);
       if ( (pos_side && score > bestEval) || (!pos_side && score < bestEval)) {
         bestEval = score;
 	bestMove = available_moves.moves[i];
       }
       takeback();
     }
-  
+   
+   if (bestMove == 0) {
+     logMessage("No move selected!\n");
+   } 
    return bestMove; 
 }
 
 int mini_max(int depth) {
+
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
 
@@ -185,6 +200,52 @@ int mini_max(int depth) {
       }
 
       takeback();
+    
+    }
+  
+  } 
+  return best;
+}
+
+int mini_max_ab(int depth, int alpha, int beta) {
+ //printf("minimax depth: %d\n",depth);
+       	moves new_moves = {{0},0};
+  generate_moves(&new_moves);
+
+  if (depth == 0 || new_moves.current_index == 0)
+    return evaluate(&new_moves);
+
+  int best, score;
+  if (pos_side == white) {
+    best = INT_MIN;
+    for (int i = 0; i<new_moves.current_index; i++) {
+      make_move(new_moves.moves[i]);
+      score = mini_max_ab(depth - 1, alpha, beta);
+      best = max(best, score);
+      alpha = max(alpha, best);
+    
+    
+      takeback();
+      if (beta <= alpha){
+	cutoffs++;
+        break;
+      }
+    }
+
+  } else {
+    best = INT_MAX;
+    for (int i = 0; i < new_moves.current_index; i++) {
+      make_move(new_moves.moves[i]);
+      score = mini_max_ab(depth - 1, alpha, beta);
+      best = min(best, score);
+      beta = min(beta, best);
+       
+      takeback();
+      if (beta <= alpha) {
+	cutoffs++;      
+        break;
+      }
+
     
     }
   
@@ -272,3 +333,11 @@ void logMessage(const char* message) {
         fflush(logFile); // Ensure the message is written immediately
     }
 }
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
