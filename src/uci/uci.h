@@ -1,5 +1,5 @@
 
-void uci();
+void uci(int depth);
 void uci_send(char* content);
 void parseMoves(char* input);
 void openLog();

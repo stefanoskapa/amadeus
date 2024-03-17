@@ -9,7 +9,8 @@
 
 FILE* logFile = NULL;
 int inf_move = 0;
-void uci() {
+
+void uci(int depth) {
   openLog();
 
   char line[4096];
@@ -26,7 +27,7 @@ void uci() {
 	if (strstr(line,"infinate")) {
 	  go_infinate = 1;
 	}
-	int move = find_best_move(MAX_DEPTH);
+	int move = find_best_move(depth);
 	if (!go_infinate)
 	  uci_send_bestmove(move);
 	else

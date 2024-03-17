@@ -1,11 +1,5 @@
 
 #include "../lib/spark.h"
-#define MAX_DEPTH 5
-typedef struct LINE {
-    int cmove;              // Number of moves in the line.
-    int argmove[MAX_DEPTH];  // The line.
-}   LINE;
-
 
 int evaluate(moves* m_list);
 int development();

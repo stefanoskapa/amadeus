@@ -8,6 +8,10 @@
 #include "../lib/spark.h"
 #include "main.h"
 #define CENTER  ((1ULL << e4) | (1ULL << d4) | (1ULL << e5) | (1ULL << d5))
+#define W_KNIGHTS  ((1ULL << b1) | (1ULL << g1))
+#define B_KNIGHTS  ((1ULL << b8) | (1ULL << g8))
+#define W_BISHOPS  ((1ULL << c1) | (1ULL << f1))
+#define B_BISHOPS  ((1ULL << c8) | (1ULL << f8))
 
 int go_infinate = 0;
 clock_t start, end;
@@ -25,7 +29,7 @@ int piece_value[] = {
 int main(void) {
   init_attack_tables();
     
-  uci();
+  uci(7);
   //starting_pos();
   //show_board();
   //play(7);
@@ -34,18 +38,18 @@ int main(void) {
 
 void play(int depth) {
   while(1) {
-	  start = clock();
-	  int move = find_best_move(depth);
+    start = clock();
+    int move = find_best_move(depth);
     end = clock();
+    
     if (move == 0)
       break;
+    
     make_move(move);
    
-   print_move_UCI(move);
+    print_move_UCI(move);
     show_board();
-    
     time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
-    
     printf("Time: %f ms\n", time_used);
   } 
 }
@@ -58,12 +62,13 @@ int find_best_move(int depth) {
   generate_moves(&available_moves);
   
   for (int i = 0; i < available_moves.current_index; i++) {
+      
       make_move(available_moves.moves[i]);
       score = mini_max_ab(depth - 1, INT_MIN, INT_MAX);
       if ( (pos_side && score > bestEval) || (!pos_side && score < bestEval)) {
         bestEval = score;
 	bestMove = available_moves.moves[i];
-             }
+      }
       takeback();
     }
    
@@ -95,9 +100,8 @@ int mini_max_ab(int depth, int alpha, int beta) {
       best = max(best,score);
       alpha = max(alpha, best);
         
-      if (beta <= alpha){
+      if (beta <= alpha)
         break;
-      }
     }
 
   } else {
@@ -110,10 +114,9 @@ int mini_max_ab(int depth, int alpha, int beta) {
       best = min(best, score); 
       beta = min(beta, best);
 
-      if (beta <= alpha) {
+      if (beta <= alpha)
         break;
-      }
-    
+        
     }
   
   }
@@ -132,22 +135,10 @@ int mat_balance() {
 int development() {
   int score = 0;
 
-  if (pos_pieces[N] & (1ULL << b1))
-    score--; 
-  if (pos_pieces[N] & (1ULL << g1))
-    score--; 
-  if (pos_pieces[B] & (1ULL << c1))
-    score--; 
-  if (pos_pieces[B] & (1ULL << f1))
-    score--; 
-  if (pos_pieces[n] & (1ULL << b8))
-    score++; 
-  if (pos_pieces[n] & (1ULL << g8))
-    score++; 
-  if (pos_pieces[b] & (1ULL << c8))
-    score++; 
-  if (pos_pieces[b] & (1ULL << f8))
-    score++; 
+  score += __builtin_popcountll(pos_pieces[N] & W_KNIGHTS);
+  score += __builtin_popcountll(pos_pieces[B] & W_BISHOPS);
+  score -= __builtin_popcountll(pos_pieces[n] & B_KNIGHTS);
+  score -= __builtin_popcountll(pos_pieces[b] & B_BISHOPS);
 
   return score;
 }
