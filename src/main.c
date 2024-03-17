@@ -59,22 +59,24 @@ void play(int depth) {
 }
 
 int find_best_move(int depth) {
-  U64 moveEval = mini_max_ab(depth, INT_MIN, INT_MAX);
+  U64 moveEval = minimax(depth);
   int bestMove = UNPACK_MOVE(moveEval);
-  int bestEval = UNPACK_EVAL(moveEval); 
+  //int bestEval = UNPACK_EVAL(moveEval); 
   if (bestMove == 0) {
      logMessage("No move selected!\n");  
   }
   return bestMove; 
 }
 
+U64 minimax(int max_depth) {
+  return mini_max_ab(0, max_depth, INT_MIN, INT_MAX);
+}
 
-
-U64 mini_max_ab(int depth, int alpha, int beta) {
+U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
 
-  if (depth == 0 || new_moves.current_index == 0) {
+  if (depth == max_depth || new_moves.current_index == 0) {
     return evaluate(&new_moves);
   }
   int bestMove = 0;
@@ -83,7 +85,7 @@ U64 mini_max_ab(int depth, int alpha, int beta) {
     bestEval = INT_MIN;
     for (int i = 0; i<new_moves.current_index; i++) {
       make_move(new_moves.moves[i]);
-      score = mini_max_ab(depth - 1, alpha, beta);
+      score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
       
       bestEval = max(bestEval,score);
@@ -101,7 +103,7 @@ U64 mini_max_ab(int depth, int alpha, int beta) {
     bestEval = INT_MAX;
     for (int i = 0; i < new_moves.current_index; i++) {
       make_move(new_moves.moves[i]);
-      score = mini_max_ab(depth - 1, alpha, beta);
+      score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
       
       bestEval = min(bestEval, score); 
