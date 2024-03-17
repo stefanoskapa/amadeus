@@ -12,7 +12,7 @@ int inf_move = 0;
 void uci() {
   openLog();
 
-  char line[256];
+  char line[4096];
     while (fgets(line, sizeof(line), stdin)) {
       logMessage(line);    
       if (strncmp(line, "uci", 3) == 0) {
@@ -47,6 +47,11 @@ void uci() {
           }	
       } else if (strncmp(line, "ucinewgame", 10) == 0) {
             parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+      } else if (strncmp(line, "show",4) == 0) {
+        show_board();
+	print_bitboard(pos_occupancies[0]);
+	print_bitboard(pos_occupancies[1]);
+	print_bitboard(pos_occupancies[2]);
       } else if (strncmp(line, "quit", 4) == 0) {
         closeLog();    
         break;
