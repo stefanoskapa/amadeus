@@ -23,15 +23,19 @@ void uci(int depth) {
       } else if (strncmp(line, "isready", 7) == 0) {
         uci_send("readyok\n");
       } else if (strncmp(line, "go", 2) == 0) {     
-        
-	if (strstr(line,"infinate")) {
-	  go_infinate = 1;
-	}
-	int move = find_best_move(depth);
-	if (!go_infinate)
-	  uci_send_bestmove(move);
-	else
-	  inf_move = move;
+          int custom_depth;
+	  if (strncmp(line, "go depth", 8) == 0) {
+          // Attempt to parse the depth value
+            sscanf(line, "go depth %d", &custom_depth);
+	    int move = find_best_move(custom_depth);
+            uci_send_bestmove(move);
+	  } else if (strstr(line,"infinate")) {
+	    inf_move = find_best_move(depth);
+            go_infinate = 1;
+	  } else {
+	    int move = find_best_move(depth);
+	    uci_send_bestmove(move);
+	  }
       } else if (strncmp(line, "stop", 4) == 0) {
         if (go_infinate) {
 	  uci_send_bestmove(inf_move);
