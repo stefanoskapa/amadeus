@@ -135,10 +135,10 @@ int mat_balance() {
 int development() {
   int score = 0;
 
-  score += __builtin_popcountll(pos_pieces[N] & W_KNIGHTS);
-  score += __builtin_popcountll(pos_pieces[B] & W_BISHOPS);
-  score -= __builtin_popcountll(pos_pieces[n] & B_KNIGHTS);
-  score -= __builtin_popcountll(pos_pieces[b] & B_BISHOPS);
+  score -= __builtin_popcountll(pos_pieces[N] & W_KNIGHTS);
+  score -= __builtin_popcountll(pos_pieces[B] & W_BISHOPS);
+  score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS);
+  score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS);
 
   return score;
 }
