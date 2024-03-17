@@ -33,7 +33,7 @@ int piece_value[] = {
 int main(void) {
   init_attack_tables();
     
-  uci(7);
+  uci(4);
   //starting_pos();
   //show_board();
   //play(7);
@@ -69,23 +69,26 @@ int find_best_move(int depth) {
 }
 
 U64 minimax(int max_depth) {
-  return mini_max_ab(0, max_depth, INT_MIN, INT_MAX);
+  return mini_max_ab(0, max_depth, INT_MIN, INT_MAX, 0);
 }
 
-U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
+U64 mini_max_ab(int depth,int max_depth, int alpha, int beta, int wasCap) {
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
-
-  if (depth == max_depth || new_moves.current_index == 0) {
-    return evaluate(&new_moves);
+  if ((depth >= max_depth && !wasCap) || new_moves.current_index == 0) {
+    return evaluate(&new_moves); //TODO stop if wasCap==false && noOponnentCaptures
   }
+
+
   int bestMove = 0;
   int bestEval, score;
   if (pos_side == white) {
     bestEval = INT_MIN;
     for (int i = 0; i<new_moves.current_index; i++) {
+      
+      //printf("depth %d   move %s\n", depth, get_move_UCI(new_moves.moves[i]));
       make_move(new_moves.moves[i]);
-      score = mini_max_ab(depth + 1, max_depth, alpha, beta);
+      score = mini_max_ab(depth + 1, max_depth, alpha, beta, get_move_capture(new_moves.moves[i]));
       takeback();
       
       bestEval = max(bestEval,score);
@@ -102,8 +105,10 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   } else {
     bestEval = INT_MAX;
     for (int i = 0; i < new_moves.current_index; i++) {
-      make_move(new_moves.moves[i]);
-      score = mini_max_ab(depth + 1, max_depth, alpha, beta);
+      
+      //printf("depth %d   move %s\n", depth, get_move_UCI(new_moves.moves[i]));
+	    make_move(new_moves.moves[i]);
+      score = mini_max_ab(depth + 1, max_depth, alpha, beta, get_move_capture(new_moves.moves[i]));
       takeback();
       
       bestEval = min(bestEval, score); 
