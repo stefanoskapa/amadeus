@@ -13,6 +13,10 @@
 #define W_BISHOPS  ((1ULL << c1) | (1ULL << f1))
 #define B_BISHOPS  ((1ULL << c8) | (1ULL << f8))
 
+#define PACK_MOVE_EVAL(move, evaluation) (((unsigned long long)(move) << 32) | ((evaluation) & 0xFFFFFFFF))
+#define UNPACK_MOVE(packed) ((packed) >> 32)
+#define UNPACK_EVAL(packed) ((int)((packed) & 0xFFFFFFFF))
+
 int go_infinate = 0;
 clock_t start, end;
 double time_used;
@@ -55,65 +59,58 @@ void play(int depth) {
 }
 
 int find_best_move(int depth) {
-  int bestMove = 0;
-  int bestEval = pos_side ? INT_MAX : INT_MIN;
-  int score = bestEval;
-  moves available_moves = {{0},0};
-  generate_moves(&available_moves);
-  
-  for (int i = 0; i < available_moves.current_index; i++) {
-      
-      make_move(available_moves.moves[i]);
-      score = mini_max_ab(depth - 1, INT_MIN, INT_MAX);
-      if ( (pos_side && score > bestEval) || (!pos_side && score < bestEval)) {
-        bestEval = score;
-	bestMove = available_moves.moves[i];
-      }
-      takeback();
-    }
-   
-   if (bestMove == 0) {
-     logMessage("No move selected!\n");
-   
+  U64 moveEval = mini_max_ab(depth, INT_MIN, INT_MAX);
+  int bestMove = UNPACK_MOVE(moveEval);
+  int bestEval = UNPACK_EVAL(moveEval); 
+  if (bestMove == 0) {
+     logMessage("No move selected!\n");  
   }
-
-
   return bestMove; 
 }
 
-int mini_max_ab(int depth, int alpha, int beta) {
+
+
+U64 mini_max_ab(int depth, int alpha, int beta) {
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
 
   if (depth == 0 || new_moves.current_index == 0) {
     return evaluate(&new_moves);
   }
-
-  int best, score;
+  int bestMove = 0;
+  int bestEval, score;
   if (pos_side == white) {
-    best = INT_MIN;
+    bestEval = INT_MIN;
     for (int i = 0; i<new_moves.current_index; i++) {
       make_move(new_moves.moves[i]);
       score = mini_max_ab(depth - 1, alpha, beta);
       takeback();
       
-      best = max(best,score);
-      alpha = max(alpha, best);
-        
+      bestEval = max(bestEval,score);
+      
+      if (bestEval > alpha) {
+        bestMove = new_moves.moves[i];
+	alpha = bestEval;
+      }  
+      
       if (beta <= alpha)
         break;
     }
 
   } else {
-    best = INT_MAX;
+    bestEval = INT_MAX;
     for (int i = 0; i < new_moves.current_index; i++) {
       make_move(new_moves.moves[i]);
       score = mini_max_ab(depth - 1, alpha, beta);
       takeback();
       
-      best = min(best, score); 
-      beta = min(beta, best);
-
+      bestEval = min(bestEval, score); 
+      
+      if (bestEval < beta) {
+        bestMove = new_moves.moves[i];
+	beta = bestEval;
+      } 
+      
       if (beta <= alpha)
         break;
         
@@ -121,7 +118,7 @@ int mini_max_ab(int depth, int alpha, int beta) {
   
   }
 
-  return best;
+  return PACK_MOVE_EVAL(bestMove, bestEval);
 }
 
 
@@ -134,27 +131,22 @@ int mat_balance() {
 
 int development() {
   int score = 0;
-
   score -= __builtin_popcountll(pos_pieces[N] & W_KNIGHTS);
   score -= __builtin_popcountll(pos_pieces[B] & W_BISHOPS);
   score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS);
   score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS);
-
   return score;
 }
 
 int pawn_structure() {
-
   int wscore = __builtin_popcountll(pos_pieces[P] & CENTER);
   int bscore = __builtin_popcountll(pos_pieces[p] & CENTER);  
   wscore = wscore * 2 * wscore;
   bscore = bscore * 2 * bscore;
-
   return (wscore - bscore) * 2;
 }
 
 int positional_score() {
-
   int score = development() + pawn_structure();
   return score;
 }
@@ -171,10 +163,10 @@ int evaluate(moves* m_list) {
 
 }
 
-int max(int a, int b) {
+inline int max(int a, int b) {
     return (a > b) ? a : b;
 }
-int min(int a, int b) {
+inline int min(int a, int b) {
     return (a < b) ? a : b;
 }
 
