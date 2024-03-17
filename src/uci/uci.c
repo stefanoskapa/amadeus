@@ -8,7 +8,7 @@
 #include "../../lib/spark.h"
 
 FILE* logFile = NULL;
-
+int inf_move = 0;
 void uci() {
   openLog();
 
@@ -22,8 +22,22 @@ void uci() {
       } else if (strncmp(line, "isready", 7) == 0) {
         uci_send("readyok\n");
       } else if (strncmp(line, "go", 2) == 0) {     
-        int move = find_best_move(6);
-	uci_send_bestmove(move);
+        
+	if (strstr(line,"infinate")) {
+	  go_infinate = 1;
+	}
+	int move = find_best_move(MAX_DEPTH);
+	if (!go_infinate)
+	  uci_send_bestmove(move);
+	else
+	  inf_move = move;
+      } else if (strncmp(line, "stop", 4) == 0) {
+        if (go_infinate) {
+	  uci_send_bestmove(inf_move);
+	  go_infinate = 0;
+	} else {
+	  logMessage("Stop was sent but not in infinate mode\n");
+	}
       } else if (strncmp(line, "position", 8) == 0) {
 	  if (strstr(line, "startpos")) {
             parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");

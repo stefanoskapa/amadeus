@@ -9,10 +9,10 @@
 #include "main.h"
 #define CENTER  ((1ULL << e4) | (1ULL << d4) | (1ULL << e5) | (1ULL << d5))
 
-
+int go_infinate = 0;
 clock_t start, end;
 double time_used;
-int cutoffs;
+
 int piece_value[] = { 
   [P] = 10, [p] = -10,
   [N] = 30, [n] = -30,
@@ -34,7 +34,6 @@ int main(void) {
 
 void play(int depth) {
   while(1) {
-    cutoffs = 0;
 	  start = clock();
 	  int move = find_best_move(depth);
     end = clock();
@@ -48,7 +47,6 @@ void play(int depth) {
     time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
     
     printf("Time: %f ms\n", time_used);
-    printf("Cutoffs %d\n", cutoffs);
   } 
 }
 
@@ -56,70 +54,35 @@ int find_best_move(int depth) {
   int bestMove = 0;
   int bestEval = pos_side ? INT_MAX : INT_MIN;
   int score = bestEval;
-
   moves available_moves = {{0},0};
   generate_moves(&available_moves);
-   
+  
   for (int i = 0; i < available_moves.current_index; i++) {
       make_move(available_moves.moves[i]);
       score = mini_max_ab(depth - 1, INT_MIN, INT_MAX);
       if ( (pos_side && score > bestEval) || (!pos_side && score < bestEval)) {
         bestEval = score;
 	bestMove = available_moves.moves[i];
-      }
+             }
       takeback();
     }
    
    if (bestMove == 0) {
      logMessage("No move selected!\n");
-   } 
-   return bestMove; 
-}
+   
+  }
 
-int mini_max(int depth) {
 
-  moves new_moves = {{0},0};
-  generate_moves(&new_moves);
-
-  if (depth == 0 || new_moves.current_index == 0)
-    return evaluate(&new_moves);
-
-  int best, score;
-  if (pos_side == white) {
-    best = INT_MIN;
-    for (int i = 0; i<new_moves.current_index; i++) {
-      make_move(new_moves.moves[i]);
-      score = mini_max(depth - 1);
-      if (score > best){
-        best = score;
-      }
-      takeback();
-    }
-
-  } else {
-    best = INT_MAX;
-    for (int i = 0; i < new_moves.current_index; i++) {
-      make_move(new_moves.moves[i]);
-      score = mini_max(depth - 1);
-      if (score < best) {
-        best = score;
-      }
-
-      takeback();
-    
-    }
-  
-  } 
-  return best;
+  return bestMove; 
 }
 
 int mini_max_ab(int depth, int alpha, int beta) {
- //printf("minimax depth: %d\n",depth);
-       	moves new_moves = {{0},0};
+  moves new_moves = {{0},0};
   generate_moves(&new_moves);
 
-  if (depth == 0 || new_moves.current_index == 0)
+  if (depth == 0 || new_moves.current_index == 0) {
     return evaluate(&new_moves);
+  }
 
   int best, score;
   if (pos_side == white) {
@@ -127,12 +90,12 @@ int mini_max_ab(int depth, int alpha, int beta) {
     for (int i = 0; i<new_moves.current_index; i++) {
       make_move(new_moves.moves[i]);
       score = mini_max_ab(depth - 1, alpha, beta);
-      best = max(best, score);
-      alpha = max(alpha, best);
-    
       takeback();
+      
+      best = max(best,score);
+      alpha = max(alpha, best);
+        
       if (beta <= alpha){
-	cutoffs++;
         break;
       }
     }
@@ -142,19 +105,19 @@ int mini_max_ab(int depth, int alpha, int beta) {
     for (int i = 0; i < new_moves.current_index; i++) {
       make_move(new_moves.moves[i]);
       score = mini_max_ab(depth - 1, alpha, beta);
-      best = min(best, score);
-      beta = min(beta, best);
-       
       takeback();
+      
+      best = min(best, score); 
+      beta = min(beta, best);
+
       if (beta <= alpha) {
-	cutoffs++;      
         break;
       }
-
     
     }
   
-  } 
+  }
+
   return best;
 }
 
