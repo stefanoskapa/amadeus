@@ -16,6 +16,7 @@ TARGET := build/amadeus
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
+	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIB)
 
 %.o: %.c
