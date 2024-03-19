@@ -6,7 +6,7 @@ CFLAGS := -O3 -g -Wall -Wextra -pedantic -std=c11
 
 
 LIB := lib/spark.a
-SRCS := src/main.c src/uci/uci.c
+SRCS := src/main.c src/uci/uci.c src/eval/eval.c
 OBJS := $(SRCS:.c=.o)
 
 # Output Executable
