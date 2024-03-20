@@ -24,8 +24,8 @@ void uci(int depth) {
         uci_send("readyok");
       } else if (strncmp(line, "go", 2) == 0) {     
 	      if (strncmp(line, "go depth", 8) == 0) {
-			    sscanf(line, "go depth %d", &custom_depth);
           int custom_depth;
+					sscanf(line, "go depth %d", &custom_depth);
 			    int move = find_best_move(custom_depth);
           uci_send_bestmove(move);
 	      } else if (strstr(line,"infinite")) {

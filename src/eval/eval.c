@@ -7,6 +7,7 @@
 #include "../uci/uci.h"
 #include "../../lib/spark.h"
 #include "../main.h"
+#include "eval.h"
 #define CENTER  ((1ULL << e4) | (1ULL << d4) | (1ULL << e5) | (1ULL << d5))
 #define W_KNIGHTS  ((1ULL << b1) | (1ULL << g1))
 #define B_KNIGHTS  ((1ULL << b8) | (1ULL << g8))
