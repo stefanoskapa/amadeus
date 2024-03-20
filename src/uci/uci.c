@@ -17,25 +17,24 @@ void uci(int depth) {
     while (fgets(line, sizeof(line), stdin)) {
       logMessage(line);    
       if (strncmp(line, "uci", 3) == 0) {
-        uci_send("id name Amadeus\n");
-        uci_send("id author StefanosKapa\n");
-        uci_send("uciok\n");
+        uci_send("id name Amadeus");
+        uci_send("id author StefanosKapa");
+        uci_send("uciok");
       } else if (strncmp(line, "isready", 7) == 0) {
-        uci_send("readyok\n");
+        uci_send("readyok");
       } else if (strncmp(line, "go", 2) == 0) {     
+	      if (strncmp(line, "go depth", 8) == 0) {
+			    sscanf(line, "go depth %d", &custom_depth);
           int custom_depth;
-	  if (strncmp(line, "go depth", 8) == 0) {
-          // Attempt to parse the depth value
-            sscanf(line, "go depth %d", &custom_depth);
-	    int move = find_best_move(custom_depth);
-            uci_send_bestmove(move);
-	  } else if (strstr(line,"infinate")) {
-	    inf_move = find_best_move(depth);
-            go_infinate = 1;
-	  } else {
-	    int move = find_best_move(depth);
-	    uci_send_bestmove(move);
-	  }
+			    int move = find_best_move(custom_depth);
+          uci_send_bestmove(move);
+	      } else if (strstr(line,"infinite")) {
+	        inf_move = find_best_move(depth);
+           go_infinate = 1;
+	      } else {
+	        int move = find_best_move(depth);
+	        uci_send_bestmove(move);
+	      }
       } else if (strncmp(line, "stop", 4) == 0) {
         if (go_infinate) {
 	  uci_send_bestmove(inf_move);

@@ -51,7 +51,8 @@ int development() {
   score -= __builtin_popcountll(pos_pieces[B] & W_BISHOPS);
   score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS);
   score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS);
-  return score * 25;
+  //return score * 25; //reasonable
+	return score * 50;
 }
 
 int pawn_structure() {
@@ -59,7 +60,8 @@ int pawn_structure() {
   int bscore = __builtin_popcountll(pos_pieces[p] & CENTER);  
   wscore = wscore * wscore * wscore;
   bscore = bscore * bscore * bscore;;
-  return (wscore - bscore) * 10;
+  //return (wscore - bscore) * 10; //reasonable
+  return (wscore - bscore) * 20;
 }
 
 int positional_score() {
@@ -67,11 +69,14 @@ int positional_score() {
   return score;
 }
 
-int evaluate(moves* m_list) {
+int evaluate(moves* m_list, int depth) {
   if (m_list->current_index == 0) {
-    if (isKingInCheck(pos_side))
-      return pos_side ? 9999 : -9999; //checkmate
-    else
+    if (isKingInCheck(pos_side)){
+	//	  printf("Checkmate found\n");
+	//		show_board();
+      return pos_side ? 99999999 - depth : -99999999 + depth; //checkmate
+    }
+		else
       return 0; //stalemate
   }
 
