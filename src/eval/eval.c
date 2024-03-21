@@ -28,11 +28,11 @@ int piece_value[] = {
 void show_evaluation() {
 
   double material = mat_balance();
-	double develop = development();
-	double center = pawn_structure();
-	double total = material + develop + center;
+  double develop = development();
+  double center = pawn_structure();
+  double total = material + develop + center;
 
-	show_board();
+  show_board();
   printf("Material:    %.2f\n", (material/100));
   printf("Development: %.2f\n", (develop/100));
   printf("Pawn Center: %.2f\n", (center/100));

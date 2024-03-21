@@ -20,7 +20,7 @@ double time_used;
 
 int main(void) {
   init_attack_tables();
-  
+
 
   uci(6);
 }
@@ -30,12 +30,12 @@ void play(int depth) {
     start = clock();
     int move = find_best_move(depth);
     end = clock();
-    
+
     if (move == 0)
       break;
-    
+
     make_move(move);
-   
+
     print_move_UCI(move);
     show_board();
     time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
@@ -47,7 +47,7 @@ int find_best_move(int depth) {
   U64 moveEval = minimax(depth);
   int bestMove = UNPACK_MOVE(moveEval);
   if (bestMove == 0) {
-     logMessage("No move selected!\n");  
+    logMessage("No move selected!\n");  
   }
 
   return bestMove; 
@@ -60,19 +60,18 @@ U64 minimax(int max_depth) {
 U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
-  
+
   if (new_moves.current_index == 0) {
-    if (isKingInCheck(pos_side))
+    if (isKingInCheck(pos_side)) //checkmate
       return pos_side ? INT_MAX - depth : INT_MIN + depth;
     return 0; //stalemate
-	} 
-  
-	if (depth == max_depth) {
-    int score = evaluate();
-		return score;
-	}
+  } 
 
-	
+  if (depth == max_depth) {
+    int score = evaluate();
+    return score;
+  }
+
   int bestMove = 0;
   int bestEval, score;
   if (pos_side == white) {
@@ -80,17 +79,17 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
     for (int i = 0; i<new_moves.current_index; i++) {
       //printf("\n%*s%s", depth* 2, "", get_move_UCI(new_moves.moves[i]));
 
-		  make_move(new_moves.moves[i]);
+      make_move(new_moves.moves[i]);
       score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
-      
+
       bestEval = max(bestEval,score);
-      
+
       if (bestEval > alpha) {
         bestMove = new_moves.moves[i];
-      	alpha = bestEval;
+        alpha = bestEval;
       }  
-      
+
       if (beta <= alpha)
         break;
     }
@@ -99,23 +98,23 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
     bestEval = INT_MAX;
     for (int i = 0; i < new_moves.current_index; i++) {
       //printf("\n%*s%s", depth *2, "", get_move_UCI(new_moves.moves[i]));
-      
-	    make_move(new_moves.moves[i]);
+
+      make_move(new_moves.moves[i]);
       score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
-      
+
       bestEval = min(bestEval, score); 
-      
+
       if (bestEval < beta) {
         bestMove = new_moves.moves[i];
-	      beta = bestEval;
+        beta = bestEval;
       } 
-      
+
       if (beta <= alpha)
         break;
-        
+
     }
-  
+
   }
 
   return PACK_MOVE_EVAL(bestMove, bestEval);
@@ -124,10 +123,10 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
 
 inline int max(int a, int b) {
-    return (a > b) ? a : b;
+  return (a > b) ? a : b;
 }
 
 inline int min(int a, int b) {
-    return (a < b) ? a : b;
+  return (a < b) ? a : b;
 }
 
