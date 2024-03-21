@@ -2,7 +2,7 @@
 #define EVAL_H
 
 
-extern int evaluate(moves* m_list, int depth);
+int evaluate();
 int development();
 int mat_balance(); 
 int pawn_structure();
