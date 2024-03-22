@@ -30,6 +30,7 @@ $(TARGET): $(OBJS)
 
 
 spark:
+	mkdir $(SPARK_INCLUDE_DIR)
 	git clone $(SPARK_REPO) $(SPARK_DIR) || (cd $(SPARK_DIR) && git pull)
 	$(MAKE) -C $(SPARK_DIR)
 	cp $(SPARK_LIB) lib/
