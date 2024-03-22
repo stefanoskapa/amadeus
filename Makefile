@@ -40,5 +40,6 @@ spark:
 # Clean Rule
 clean:
 	rm -f $(OBJS) $(TARGET) lib/spark.a lib/spark.h 
+	rm -rf lib
 run:
 	@build/amadeus
