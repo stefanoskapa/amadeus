@@ -28,8 +28,8 @@ int main(void) {
   init_zobrist();
 
   //parse_fen("5k2/3K4/5pPp/3p3P/P2r2P1/8/8/4R3 w - - 1 40");
-  //startpos();
-  //play(5);
+  //  startpos();
+  // play(6);
 
   //startpos();
 
@@ -88,7 +88,7 @@ void startpos() {
 }
 void play(int depth) {
   while(1) {
-    
+
     getchar();
     start = clock();
     int move = find_best_move(depth);
@@ -138,6 +138,67 @@ int isThreefold() {
 
 }
 
+/*
+   Stand_pat is the evaluation of the current position and
+   is used for the base condition.
+   If white to move is  already better than black's lowest guaranteed
+   outcome (beta), then white is good enough (as he additionally gets
+   to play a move). If stand_pat is better than white's best outcome,
+   alpha takes the value of stand_pat. The same logic is repeated
+   while backtracking because it will prevent unnecessary recursive
+   calls.
+
+ */
+U64 q_search(int depth, int alpha, int beta) {
+
+  moves new_moves = {{0},0};
+  generate_moves(&new_moves);
+  if (new_moves.current_index == 0) {
+    if (isKingInCheck(pos_side)) //checkmate
+      return pos_side ? INT_MAX - depth : INT_MIN + depth;
+    return 0; //stalemate
+  } 
+
+  int stand_pat = evaluate(); 
+
+  if (pos_side == white) {
+    if (stand_pat >= beta)
+      return beta;
+    alpha = max(alpha, stand_pat);
+
+    for (int i = 0; i<new_moves.current_index && get_move_capture(new_moves.moves[i]); i++) {
+      make_move(new_moves.moves[i]);
+      int score = q_search(depth + 1, alpha, beta);
+      takeback();
+
+      if (score >= beta)
+        return beta;
+      if (score > alpha)
+        alpha = score;
+    }
+  } else {
+    if (stand_pat <= alpha)
+      return alpha;
+    if (stand_pat < beta)
+      beta = stand_pat;
+
+    for (int i = 0; i<new_moves.current_index && get_move_capture(new_moves.moves[i]); i++) {
+
+      make_move(new_moves.moves[i]);
+      int score = q_search(depth + 1, alpha, beta);
+      takeback();
+
+      if (score <= alpha)
+        return alpha;
+      if (score < beta)
+        beta = score;
+    }
+  }
+
+  return pos_side == white ? alpha : beta;
+}
+
+
 U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
   moves new_moves = {{0},0};
@@ -148,12 +209,12 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
       return pos_side ? INT_MAX - depth : INT_MIN + depth;
     return 0; //stalemate
   } 
-  
+
   if (isThreefold() == 1)
     return 0;
-  
+
   if (depth == max_depth) {
-    int score = evaluate();
+    int score = q_search(depth, alpha, beta);
     return score;
   }
 
@@ -170,9 +231,9 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
       score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
       popl(&visited);
-//      if (depth == 0) {
-//        printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
-//      }
+      if (depth == 0) {
+        printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+      }
       bestEval = max(bestEval,score);
 
       if (bestEval > alpha) {
@@ -195,6 +256,9 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
       takeback();
       popl(&visited);
+      if (depth == 0) {
+        printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+      }
 
       bestEval = min(bestEval, score); 
 
