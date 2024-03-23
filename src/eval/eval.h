@@ -7,5 +7,5 @@ int development();
 int mat_balance(); 
 int pawn_structure();
 int positional_score();
-
+void show_evaluation();
 #endif
