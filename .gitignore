@@ -2,3 +2,4 @@ engine.log
 *.o
 build/**
 lib/**
+external/**

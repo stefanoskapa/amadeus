@@ -30,16 +30,18 @@ $(TARGET): $(OBJS)
 
 
 spark:
-	mkdir $(SPARK_INCLUDE_DIR)
-	git clone $(SPARK_REPO) $(SPARK_DIR) || (cd $(SPARK_DIR) && git pull)
+	if [ ! -d "$(SPARK_DIR)" ]; then \
+     mkdir -p $(SPARK_INCLUDE_DIR); \
+     git clone $(SPARK_REPO) $(SPARK_DIR); \
+  else \
+    cd $(SPARK_DIR) && git pull; \
+	fi	
 	$(MAKE) -C $(SPARK_DIR)
 	cp $(SPARK_LIB) lib/
 	cp $(SPARK_DIR)/spark.h $(SPARK_INCLUDE_DIR)/
-	rm -rf external
 
 # Clean Rule
 clean:
 	rm -f $(OBJS) $(TARGET) lib/spark.a lib/spark.h 
-	rm -rf lib
 run:
 	@build/amadeus
