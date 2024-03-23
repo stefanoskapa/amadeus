@@ -10,5 +10,8 @@ int max(int number1, int number2);
 int min(int number1, int number2);
 extern int go_infinate;
 void play(int depth);
+U64 rand_64(void);
+U64 get_zobrist();
+void init_zobrist();
 
 #endif
