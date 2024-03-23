@@ -21,9 +21,16 @@ U64 z_castling[16];
 U64 z_ep[65];
 U64 z_side[2];
 
+long_stack visited = {{0},0};
+
 int main(void) {
   init_attack_tables();
   init_zobrist();
+
+  //parse_fen("5k2/3K4/5pPp/3p3P/P2r2P1/8/8/4R3 w - - 1 40");
+  //startpos();
+  //play(5);
+
   //startpos();
 
   //printf("%llu\n", get_zobrist());
@@ -41,7 +48,7 @@ U64 get_zobrist() {
       continue;
     hash ^= z_pieces[piece][i];
   }
-  hash ^= z_ep[pos_ep];
+  hash ^= z_ep[pos_ep]; //not necessary to have 64 squares
   hash ^= z_castling[pos_castling];
   hash ^= z_side[pos_side];
   return hash;
@@ -81,17 +88,18 @@ void startpos() {
 }
 void play(int depth) {
   while(1) {
+    
+    getchar();
     start = clock();
     int move = find_best_move(depth);
     end = clock();
 
     if (move == 0)
       break;
-
     make_move(move);
-
+    pushl(&visited, get_zobrist());
     print_move_UCI(move);
-    show_board();
+    show_evaluation();
     time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
     printf("Time: %f ms\n", time_used);
   } 
@@ -111,7 +119,27 @@ U64 minimax(int max_depth) {
   return mini_max_ab(0, max_depth, INT_MIN, INT_MAX);
 }
 
+
+int isThreefold() {
+  if (visited.index == 0)
+    return 0;
+  U64 last = visited.items[visited.index - 1];
+  int count = 0;
+  for (int i = 0; i < visited.index - 1; i++) {
+    if(visited.items[i] == last) {
+      count++;
+    }
+
+    if (count == 2) {
+      return 1; // threefold repetition detected
+    }
+  }
+  return 0;
+
+}
+
 U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
+
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
 
@@ -120,7 +148,10 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
       return pos_side ? INT_MAX - depth : INT_MIN + depth;
     return 0; //stalemate
   } 
-
+  
+  if (isThreefold() == 1)
+    return 0;
+  
   if (depth == max_depth) {
     int score = evaluate();
     return score;
@@ -134,9 +165,14 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
       //printf("\n%*s%s", depth* 2, "", get_move_UCI(new_moves.moves[i]));
 
       make_move(new_moves.moves[i]);
+      pushl(&visited, get_zobrist());
+
       score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
-
+      popl(&visited);
+//      if (depth == 0) {
+//        printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+//      }
       bestEval = max(bestEval,score);
 
       if (bestEval > alpha) {
@@ -154,8 +190,11 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
       //printf("\n%*s%s", depth *2, "", get_move_UCI(new_moves.moves[i]));
 
       make_move(new_moves.moves[i]);
+      pushl(&visited, get_zobrist());
       score = mini_max_ab(depth + 1, max_depth, alpha, beta);
+
       takeback();
+      popl(&visited);
 
       bestEval = min(bestEval, score); 
 
@@ -184,3 +223,24 @@ inline int min(int a, int b) {
   return (a < b) ? a : b;
 }
 
+void pushl(long_stack *is, U64 item) { 
+  if (is->index > 600) {
+    printf("Too many moves, stack full\n");
+    exit(1);
+  }
+  is->items[is->index++] = item; 
+
+}
+
+U64 popl(long_stack *is) {
+  is->index--;
+  return is->items[is->index];
+}
+
+void show_stackl(long_stack *is) {
+
+  printf("Stack contents\n");
+  for (int i = 0; i < is->index; i++) {
+    printf("%llu\n", is->items[i]);
+  }
+}

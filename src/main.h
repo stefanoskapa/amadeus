@@ -14,4 +14,13 @@ U64 rand_64(void);
 U64 get_zobrist();
 void init_zobrist();
 
+typedef struct long_stack {
+  U64 items[600];
+  int index;
+} long_stack;
+
+extern long_stack visited;
+void pushl(long_stack*, U64);
+U64 popl(long_stack*);
+
 #endif

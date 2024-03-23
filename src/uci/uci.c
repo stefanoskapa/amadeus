@@ -45,12 +45,14 @@ void uci(int depth) {
     } else if (strncmp(line, "position", 8) == 0) {
       if (strstr(line, "startpos")) {
         parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        visited.index = 0;
       }   
       if (strstr(line, "moves")) {
         parseMoves(line);
       }	
     } else if (strncmp(line, "ucinewgame", 10) == 0) {
       parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+      visited.index = 0;
     } else if (strncmp(line, "show",4) == 0) {
       show_board();
       print_bitboard(pos_occupancies[0]);
@@ -113,6 +115,7 @@ void parseMoves(char* input) {
         logMessage("could not find move!\n");
       else {
         make_move(move);
+        pushl(&visited, get_zobrist());
       }
 
     }
