@@ -28,8 +28,11 @@ int main(void) {
   init_zobrist();
 
   //parse_fen("5k2/3K4/5pPp/3p3P/P2r2P1/8/8/4R3 w - - 1 40");
-  //  startpos();
-  // play(6);
+//  parse_fen("rnb1kb1r/ppp2ppp/4p1q1/8/3PN3/5P2/PPP3PP/R2QKBNR b KQkq - 0 7");
+//   startpos();
+ //parse_fen("rnb1kb1r/ppp2ppp/4p1q1/8/3PN3/8/PPP2PPP/R2QKBNR w KQkq - 1 7");
+// parse_fen("r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R b KQkq - 3 4");
+ //play(5);
 
   //startpos();
 
@@ -231,9 +234,9 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
       score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
       popl(&visited);
-      if (depth == 0) {
-        printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
-      }
+//      if (depth == 0) {
+//        printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+//      }
       bestEval = max(bestEval,score);
 
       if (bestEval > alpha) {
@@ -256,9 +259,9 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
       takeback();
       popl(&visited);
-      if (depth == 0) {
-        printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
-      }
+  //    if (depth == 0) {
+  //      printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+  //    }
 
       bestEval = min(bestEval, score); 
 

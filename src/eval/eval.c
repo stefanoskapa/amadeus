@@ -22,6 +22,27 @@
 #define B_P_BONUS_3 ((1ULL << a3 | 1ULL << b3 | 1ULL << c3 | 1ULL << d3 | 1ULL << e3 | 1ULL << f3 | 1ULL << g3 | 1ULL << h3))
 #define B_P_BONUS_4 ((1ULL << a4 | 1ULL << b4 | 1ULL << c4 | 1ULL << d4 | 1ULL << e4 | 1ULL << f4 | 1ULL << g4 | 1ULL << h4))
 
+int b_king[] = {
+    5,  10,   5,   0,   0,   0,  10,   5, 
+    0, -10, -20, -20, -20, -20, -10,   0,
+  -30, -30, -30, -30, -30, -30, -30, -20,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+  -40, -40, -40, -40, -40, -40, -40, -40
+  };
+
+int w_king[] = {
+  -30, -30, -30, -30, -30, -30, -30, -20,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+  -40, -40, -40, -40, -40, -40, -40, -40,
+    0, -10, -20, -20, -20, -20, -10,   0,
+    5,  10,   5,   0,   0,   0,  10,   5 
+  };
 
 int piece_value[] = { 
   [P] = 100, [p] = -100,
@@ -37,12 +58,13 @@ void show_evaluation() {
   double material = mat_balance();
   double develop = development();
   double center = pawn_structure();
-  double total = material + develop + center;
-
+  double king = king_safety();
+  double total = material + develop + center + king;
   show_board();
   printf("Material:    %.2f\n", (material/100));
   printf("Development: %.2f\n", (develop/100));
   printf("Pawn Center: %.2f\n", (center/100));
+  printf("King Safety: %.2f\n", (king/100));
   printf("Grand total: %.2f\n", (total/100));
 }
 
@@ -53,6 +75,26 @@ int mat_balance() {
   return sum;
 }
 
+int king_safety() {
+  
+  int score = 0;
+  int ksquare;
+  U64 bitboard;
+  if (pos_pieces[q]){ 
+    ksquare = __builtin_ctzll(pos_pieces[K]);
+    bitboard = get_queen_attacks(ksquare, pos_occupancies[0]);
+    score -= __builtin_popcountll(bitboard);
+    score += w_king[ksquare];  
+  }
+  
+  if (pos_pieces[Q]) {
+    ksquare = __builtin_ctzll(pos_pieces[k]);
+    bitboard = get_queen_attacks(ksquare, pos_occupancies[1]);
+    score += __builtin_popcountll(bitboard);
+    score -= b_king[ksquare];
+  }
+  return score * 10;
+}
 int development() {
   int score = 0;
   score -= __builtin_popcountll(pos_pieces[N] & W_KNIGHTS);
@@ -82,7 +124,7 @@ int pawn_structure() {
 }
 
 int positional_score() {
-  int score = development() + pawn_structure();
+  int score = development() + pawn_structure() + king_safety();
   return score;
 }
 
