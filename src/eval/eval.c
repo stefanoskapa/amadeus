@@ -100,7 +100,7 @@ int king_safety() {
     bscore -= __builtin_popcountll(bitboard);
     bscore += b_king[ksquare];
   }
-  return (wscore - bscore) * 8;
+  return (wscore - bscore) * 7;
 }
 int development() {
   int score = 0;
