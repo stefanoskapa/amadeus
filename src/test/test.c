@@ -29,9 +29,13 @@ int main(void) {
 }
 
 void run_tests() {
-  test1();
-  test2();
-  test3();
+
+  opening_best_move_test_1();
+  opening_best_move_test_2();
+  opening_best_move_test_3();
+
+  dont_do_this_test_1();
+
 }
 
 /* Alekhine Defense: 1.e4 Nf6 2.e5 Nd5 3.d4
@@ -40,8 +44,8 @@ void run_tests() {
   1) Challenges white's impressive pawn center
   2) Enables minor piece development for black
 */
-void test1() {
-  printf("\n [ Test 1 ]\n");
+void opening_best_move_test_1() {
+  printf("\n [ Opening Best Move Test 1 ]\n");
   parse_fen("rnbqkb1r/pppppppp/8/3nP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3");
   show_board();
   int move = find_best_move(5);
@@ -60,8 +64,8 @@ void test1() {
    3) Can develop his pieces quickly
 */
 
-void test2() {
-  printf("\n [ Test 2 ]\n");
+void opening_best_move_test_2() {
+  printf("\n [ Opening Best Move Test 2 ]\n");
   parse_fen("rnbqkbnr/1ppppppp/p7/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
   show_board();
   int move = find_best_move(5);
@@ -77,8 +81,8 @@ void test2() {
    d2d4 is again the best move, for the same reasons as in the
    previous test case.
 */
-void test3() {
-  printf("\n [ Test 3 ]\n");
+void opening_best_move_test_3() {
+  printf("\n [ Opening Best Move Test 3 ]\n");
   parse_fen("rnbqkbnr/p1pppppp/1p6/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
    show_board();
   int move = find_best_move(5);
@@ -88,7 +92,19 @@ void test3() {
   } else {
     printf("Failed :(\n");
   }
+}
 
+void dont_do_this_test_1() {
+  printf("\n [ \"Don't do this\" Test 1 ]\n");
+  parse_fen("r1bqk2r/ppp1bppp/2n1pn2/3p4/3P4/3BPN1P/PPPN1PP1/R1BQK2R b KQkq - 2 6");
+  show_board();
+  int move = find_best_move(5);
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "a7a5") == 0) {
+    printf("Failed :(\n");
+  } else {
+    printf("Success: Bad move avoided\n");
+  }
 
 }
 void startpos() {
