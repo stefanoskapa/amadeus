@@ -23,9 +23,9 @@
 #define B_P_BONUS_4 ((1ULL << a4 | 1ULL << b4 | 1ULL << c4 | 1ULL << d4 | 1ULL << e4 | 1ULL << f4 | 1ULL << g4 | 1ULL << h4))
 
 int b_king[] = {
-    5,  10,   5,   0,   0,   0,  10,   5, 
-    0, -10, -20, -20, -20, -10, -10,   0,
-  -30, -30, -30, -30, -30, -30, -30, -20,
+    5,  10,   9, -15,   0, -15,  10,   5, 
+    0, -10, -20, -20, -20, -15, -10,   0,
+  -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
@@ -34,14 +34,14 @@ int b_king[] = {
   };
 
 int w_king[] = {
-  -40, -40, -40, -40, -40, -40, -40, -40
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
-    0, -10, -10, -20, -20, -10, -10,   0,
-    5,  10,   5,   0,   0,   0,  10,   5 
+  -40, -40, -40, -40, -40, -40, -40, -40,
+    0, -10, -20, -20, -20, -15, -10,   0,
+    5,  10,  9,  -15,   0, -15,  10,   5 
   };
 
 int piece_value[] = { 
@@ -66,6 +66,12 @@ void show_evaluation() {
   printf("Pawn Center: %.2f\n", (center/100));
   printf("King Safety: %.2f\n", (king/100));
   printf("Grand total: %.2f\n", (total/100));
+
+
+    int ksquare = __builtin_ctzll(pos_pieces[K]);
+    printf("wkings score=%d\n", w_king[ksquare]);
+    printf("kings square=%s\n", square_to_coordinates[ksquare]);
+    printf("wking index=%d\n", ksquare);
 }
 
 int mat_balance() {
@@ -77,23 +83,24 @@ int mat_balance() {
 
 int king_safety() {
   
-  int score = 0;
+  int wscore = 0;
+  int bscore = 0;
   int ksquare;
   U64 bitboard;
-  if (pos_pieces[q]){ 
+  if (pos_pieces[q]){ // white king score 
     ksquare = __builtin_ctzll(pos_pieces[K]);
     bitboard = get_queen_attacks(ksquare, pos_occupancies[0]);
-    score -= __builtin_popcountll(bitboard);
-    score += w_king[ksquare];  
+    wscore -= __builtin_popcountll(bitboard);
+    wscore += w_king[ksquare];  
   }
   
   if (pos_pieces[Q]) {
     ksquare = __builtin_ctzll(pos_pieces[k]);
     bitboard = get_queen_attacks(ksquare, pos_occupancies[1]);
-    score += __builtin_popcountll(bitboard);
-    score -= b_king[ksquare];
+    bscore -= __builtin_popcountll(bitboard);
+    bscore += b_king[ksquare];
   }
-  return score * 8;
+  return (wscore - bscore) * 8;
 }
 int development() {
   int score = 0;
