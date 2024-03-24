@@ -3,6 +3,7 @@
 
 
 int evaluate();
+int king_safety();
 int development();
 int mat_balance(); 
 int pawn_structure();

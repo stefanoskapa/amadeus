@@ -6,8 +6,8 @@
 #include <math.h>
 #include "../uci/uci.h"
 #include "../../lib/spark.h"
-#include "../main.h"
 #include "eval.h"
+
 #define CENTER  ((1ULL << e4) | (1ULL << d4) | (1ULL << e5) | (1ULL << d5))
 #define W_KNIGHTS  ((1ULL << b1) | (1ULL << g1))
 #define B_KNIGHTS  ((1ULL << b8) | (1ULL << g8))
@@ -66,12 +66,6 @@ void show_evaluation() {
   printf("Pawn Center: %.2f\n", (center/100));
   printf("King Safety: %.2f\n", (king/100));
   printf("Grand total: %.2f\n", (total/100));
-
-
-    int ksquare = __builtin_ctzll(pos_pieces[K]);
-    printf("wkings score=%d\n", w_king[ksquare]);
-    printf("kings square=%s\n", square_to_coordinates[ksquare]);
-    printf("wking index=%d\n", ksquare);
 }
 
 int mat_balance() {

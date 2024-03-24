@@ -6,8 +6,11 @@ CFLAGS := -O3 -g -Wall -Wextra -pedantic -std=c11
 
 
 LIB := lib/spark.a
-SRCS := src/main.c src/uci/uci.c src/eval/eval.c
+SRCS := src/main.c src/uci/uci.c src/eval/eval.c src/search/search.c src/zobr/zobr.c
 OBJS := $(SRCS:.c=.o)
+
+TEST_SRC := src/test/test.c src/uci/uci.c src/eval/eval.c src/search/search.c src/zobr/zobr.c
+TEST_OBJ := $(TEST_SRC:.c=.o)
 
 SPARK_REPO := https://github.com/stefanoskapa/spark.git
 SPARK_DIR := external/spark
@@ -17,13 +20,19 @@ SPARK_INCLUDE_DIR := lib
 
 # Output Executable
 TARGET := build/amadeus
+TEST_TARGET := build/test
+
 
 # Build Rule
-all: spark $(TARGET)
+all: spark $(TARGET) $(TEST_TARGET)
 
 $(TARGET): $(OBJS)
 	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIB)
+
+$(TEST_TARGET): $(TEST_OBJ)
+	mkdir -p $(@D)
+	$(CC) $(CFLAGS) -o $@ $(TEST_OBJ) $(LIB)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -45,3 +54,6 @@ clean:
 	rm -f $(OBJS) $(TARGET) lib/spark.a lib/spark.h 
 run:
 	@build/amadeus
+
+test: $(TEST_TARGET)
+	@./$(TEST_TARGET)

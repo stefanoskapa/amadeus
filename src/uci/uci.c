@@ -4,14 +4,16 @@
 #include <time.h>
 #include <math.h>
 #include "uci.h"
-#include "../main.h"
 #include "../../lib/spark.h"
+#include "../search/search.h"
+#include "../zobr/zobr.h"
 
 FILE* logFile = NULL;
 int inf_move = 0;
 
 void uci(int depth) {
   openLog();
+  int go_infinate = 0;
 
   char line[4096];
   while (fgets(line, sizeof(line), stdin)) {
