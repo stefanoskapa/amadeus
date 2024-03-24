@@ -22,10 +22,34 @@ int main(void) {
   init_attack_tables();
   init_zobrist();
 
-   startpos();
-   //parse_fen("rnbqkb1r/pppppppp/8/4P3/4n3/3P4/PPP2PPP/RNBQKBNR b KQkq - 0 3");
-   //parse_fen("rnbqkb1r/pppppppp/8/4P3/4n3/3P4/PPP2PPP/RNBQKBNR b KQkq - 0 3");
-   play(5);
+  run_tests();
+  
+  startpos();
+  play(5);
+}
+
+void run_tests() {
+  test1();
+  test2();
+}
+void test1() {
+  printf("\n [ Test 1 ]\n");
+  parse_fen("rnbqkb1r/pppppppp/8/3nP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3");
+  show_evaluation();
+  int move = find_best_move(5);
+  
+  make_move(move);
+  show_evaluation();
+}
+
+void test2() {
+  
+  printf("\n [ Test 2 ]\n");
+  parse_fen("rnbqkb1r/ppp1pppp/5n2/3p4/3P4/2N5/PPP1PPPP/R1BQKBNR w KQkq - 2 3");
+  show_evaluation();
+  int move = find_best_move(5); 
+  make_move(move);
+  show_evaluation();
 
 }
 
