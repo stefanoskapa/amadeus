@@ -29,8 +29,8 @@ int main(void) {
 
 //   startpos();
 //parse_fen("rnbqkb1r/pppppppp/8/4P3/4n3/3P4/PPP2PPP/RNBQKBNR b KQkq - 0 3");
-parse_fen("rnbqkb1r/pppppppp/8/4P3/4n3/3P4/PPP2PPP/RNBQKBNR b KQkq - 0 3");
-play(5);
+//parse_fen("rnbqkb1r/pppppppp/8/4P3/4n3/3P4/PPP2PPP/RNBQKBNR b KQkq - 0 3");
+//play(5);
 
   uci(6);
 }
