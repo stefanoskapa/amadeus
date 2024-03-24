@@ -31,6 +31,7 @@ int main(void) {
 void run_tests() {
   test1();
   test2();
+  test3();
 }
 void test1() {
   printf("\n [ Test 1 ]\n");
@@ -53,6 +54,17 @@ void test2() {
 
 }
 
+
+void test3() {
+  
+  printf("\n [ Test 3 ]\n");
+  parse_fen("rnbqkb1r/ppp2ppp/4pn2/3p2B1/3P4/2N5/PPP1PPPP/R2QKBNR w KQkq - 0 4");
+
+  show_evaluation();
+  int move = find_best_move(5); 
+  make_move(move);
+  show_evaluation();
+}
 void startpos() {
   parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }

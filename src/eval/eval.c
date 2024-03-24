@@ -49,7 +49,7 @@ int w_king[] = {
 int piece_value[] = { 
   [P] = 100, [p] = -100,
   [N] = 300, [n] = -300,
-  [B] = 300, [b] = -300,
+  [B] = 310, [b] = -310,
   [R] = 500, [r] = -500,
   [Q] = 900, [q] = -900,
   [K] = 9999, [k] = -9999
@@ -125,7 +125,7 @@ int pawn_structure() {
   bscore += __builtin_popcountll(pos_pieces[p] & B_P_BONUS_4);
 
 
-  return (wscore - bscore) * 5; //reasonable
+  return (wscore - bscore) * 6; //reasonable
 }
 
 int positional_score() {
