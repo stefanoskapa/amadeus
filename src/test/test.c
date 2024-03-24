@@ -33,37 +33,63 @@ void run_tests() {
   test2();
   test3();
 }
+
+/* Alekhine Defense: 1.e4 Nf6 2.e5 Nd5 3.d4
+  d7d6 is the most aggressive option and probably the best
+  move in the position:
+  1) Challenges white's impressive pawn center
+  2) Enables minor piece development for black
+*/
 void test1() {
   printf("\n [ Test 1 ]\n");
   parse_fen("rnbqkb1r/pppppppp/8/3nP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3");
-  show_evaluation();
+  show_board();
   int move = find_best_move(5);
-  
-  make_move(move);
-  show_evaluation();
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "d7d6") == 0) {
+    printf("Success: best move found\n");
+  } else {
+    printf("Failed :(\n");
+  }
 }
+
+/* St. George Defense: 1.e4 a6
+   d2d4 is no doubt the best punishment for such a passive move.
+   1) White builds an ideal pawn center for free
+   2) Controls the central squares
+   3) Can develop his pieces quickly
+*/
 
 void test2() {
-  
   printf("\n [ Test 2 ]\n");
-  parse_fen("rnbqkb1r/ppp1pppp/5n2/3p4/3P4/2N5/PPP1PPPP/R1BQKBNR w KQkq - 2 3");
-  show_evaluation();
-  int move = find_best_move(5); 
-  make_move(move);
-  show_evaluation();
-
+  parse_fen("rnbqkbnr/1ppppppp/p7/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
+  show_board();
+  int move = find_best_move(5);
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "d2d4") == 0) {
+    printf("Success: best move found\n");
+  } else {
+    printf("Failed :(\n");
+  }
 }
 
-
+/* Owen Defense: 1.e4 b6
+   d2d4 is again the best move, for the same reasons as in the
+   previous test case.
+*/
 void test3() {
-  
   printf("\n [ Test 3 ]\n");
-  parse_fen("rnbqkb1r/ppp2ppp/4pn2/3p2B1/3P4/2N5/PPP1PPPP/R2QKBNR w KQkq - 0 4");
+  parse_fen("rnbqkbnr/p1pppppp/1p6/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
+   show_board();
+  int move = find_best_move(5);
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "d2d4") == 0) {
+    printf("Success: best move found\n");
+  } else {
+    printf("Failed :(\n");
+  }
 
-  show_evaluation();
-  int move = find_best_move(5); 
-  make_move(move);
-  show_evaluation();
+
 }
 void startpos() {
   parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");

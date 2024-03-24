@@ -106,7 +106,7 @@ int development() {
   score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS) * 3;
   score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS) * 3;
   score += __builtin_popcountll(pos_pieces[p] & B_P_E7_D7);
- return score * 10; //reasonable
+ return score * 7;
 }
 
 int pawn_structure() {
@@ -125,7 +125,7 @@ int pawn_structure() {
   bscore += __builtin_popcountll(pos_pieces[p] & B_P_BONUS_4);
 
 
-  return (wscore - bscore) * 6; //reasonable
+  return (wscore - bscore) * 7;
 }
 
 int positional_score() {
