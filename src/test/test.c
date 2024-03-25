@@ -35,6 +35,9 @@ void run_tests() {
   opening_best_move_test_3();
 
   dont_do_this_test_1();
+  dont_do_this_test_2();
+  dont_do_this_test_3();
+  dont_do_this_test_4();
 
 }
 
@@ -105,8 +108,59 @@ void dont_do_this_test_1() {
   } else {
     printf("Success: Bad move avoided\n");
   }
-
 }
+
+/*
+  White sacrificed the knight on e4
+*/
+void dont_do_this_test_2() {
+  printf("\n [ \"Don't do this\" Test 2 ]\n");
+  parse_fen("2r2rk1/ppq2pp1/2n1pnp1/1B1p4/3Pp3/1PN1QP1P/P1P3P1/R4RK1 w - - 1 17");
+  show_board();
+  int move = find_best_move(5);
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "c3e4") == 0) {
+    printf("Failed :(\n");
+  } else {
+    printf("Success: Bad move avoided\n");
+  }
+}
+
+/*
+  Engine thinks it can go e3e4 because it 
+  doesn't see the Qa5+ tactic after the exchanges
+  on e4.
+*/
+void dont_do_this_test_3() {
+  printf("\n [ \"Don't do this\" Test 3 ]\n");
+  parse_fen("3rk2r/ppq2pp1/2nppnp1/1B1p4/3P4/1PN1PQ1P/P1P2PP1/R3K2R w KQk - 1 13");
+  show_board();
+  int move = find_best_move(5);
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "e3e4") == 0) {
+    printf("Failed :(\n");
+  } else {
+    printf("Success: Bad move avoided\n");
+  }
+}
+/*
+  Plays Bd3 in Rossolimo Variation
+
+*/
+void dont_do_this_test_4() {
+  printf("\n [ \"Don't do this\" Test 4 ]\n");
+  parse_fen("r1bqkbnr/pp1ppppp/2n5/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3");
+  show_board();
+  int move = find_best_move(5);
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "f1d3") == 0) {
+    printf("Failed :(\n");
+  } else {
+    printf("Success: Bad move avoided\n");
+  }
+}
+
+
 void startpos() {
   parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }

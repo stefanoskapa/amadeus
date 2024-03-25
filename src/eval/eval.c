@@ -102,11 +102,11 @@ int development() {
   int score = 0;
   score -= __builtin_popcountll(pos_pieces[N] & W_KNIGHTS) * 3;
   score -= __builtin_popcountll(pos_pieces[B] & W_BISHOPS) * 3;
-  score -= __builtin_popcountll(pos_pieces[P] & W_P_E2_D2);
+  score -= __builtin_popcountll(pos_pieces[P] & W_P_E2_D2) * 3;
   score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS) * 3;
   score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS) * 3;
-  score += __builtin_popcountll(pos_pieces[p] & B_P_E7_D7);
- return score * 7;
+  score += __builtin_popcountll(pos_pieces[p] & B_P_E7_D7) * 3;
+ return score * 6;  //was 7
 }
 
 int pawn_structure() {
@@ -125,7 +125,7 @@ int pawn_structure() {
   bscore += __builtin_popcountll(pos_pieces[p] & B_P_BONUS_4);
 
 
-  return (wscore - bscore) * 7;
+  return (wscore - bscore) * 6;
 }
 
 int positional_score() {
