@@ -16,6 +16,7 @@
 
 #define W_P_E2_D2 ( (1ULL << e2) | (1ULL << d2))
 #define B_P_E7_D7 ( (1ULL << e7) | (1ULL << d7))
+
 #define W_P_BONUS_7 ((1ULL << a7 | 1ULL << b7 | 1ULL << c7 | 1ULL << d7 | 1ULL << e7 | 1ULL << f7 | 1ULL << g7 | 1ULL << h7))
 #define W_P_BONUS_6 ((1ULL << a6 | 1ULL << b6 | 1ULL << c6 | 1ULL << d6 | 1ULL << e6 | 1ULL << f6 | 1ULL << g6 | 1ULL << h6))
 #define W_P_BONUS_5 ((1ULL << a5 | 1ULL << b5 | 1ULL << c5 | 1ULL << d5 | 1ULL << e5 | 1ULL << f5 | 1ULL << g5 | 1ULL << h5))
@@ -79,34 +80,35 @@ int mat_balance() {
 
 int king_safety() {
   
-  int wscore = 0;
-  int bscore = 0;
+  int score = 0;
   int ksquare;
   U64 bitboard;
+  
   if (pos_pieces[q]){ // white king score 
     ksquare = __builtin_ctzll(pos_pieces[K]);
     bitboard = get_queen_attacks(ksquare, pos_occupancies[0]);
-    wscore -= __builtin_popcountll(bitboard);
-    wscore += w_king[ksquare];  
+    score -= __builtin_popcountll(bitboard);
+    score += w_king[ksquare];  
   }
   
   if (pos_pieces[Q]) {
     ksquare = __builtin_ctzll(pos_pieces[k]);
     bitboard = get_queen_attacks(ksquare, pos_occupancies[1]);
-    bscore -= __builtin_popcountll(bitboard);
-    bscore += b_king[ksquare];
+    score += __builtin_popcountll(bitboard);
+    score -= b_king[ksquare];
   }
-  return (wscore - bscore) * 3;
+  return score * 3;
 }
+
 int development() {
   int score = 0;
-  score -= __builtin_popcountll(pos_pieces[N] & W_KNIGHTS) * 3;
-  score -= __builtin_popcountll(pos_pieces[B] & W_BISHOPS) * 3;
-  score -= __builtin_popcountll(pos_pieces[P] & W_P_E2_D2) * 3;
-  score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS) * 3;
-  score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS) * 3;
-  score += __builtin_popcountll(pos_pieces[p] & B_P_E7_D7) * 3;
- return score * 6;  //was 7
+  score -= __builtin_popcountll(pos_pieces[N] & W_KNIGHTS);
+  score -= __builtin_popcountll(pos_pieces[B] & W_BISHOPS);
+  score -= __builtin_popcountll(pos_pieces[P] & W_P_E2_D2);
+  score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS);
+  score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS);
+  score += __builtin_popcountll(pos_pieces[p] & B_P_E7_D7);
+ return score * 18;
 }
 
 int pawn_structure() {
