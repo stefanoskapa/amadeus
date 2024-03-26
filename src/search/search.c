@@ -57,59 +57,76 @@ int isThreefold() {
    calls.
 
  */
-U64 q_search(int depth, int alpha, int beta) {
+U64 q_search(int depth, int alpha, int beta, int max_depth) {
 
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
-  
+
   if (new_moves.current_index == 0) {
     if (isKingInCheck(pos_side)) //checkmate
       return pos_side ? INT_MAX - depth : INT_MIN + depth;
     return 0; //stalemate
-  } 
+  }
 
   int stand_pat = evaluate(); 
 
   if (pos_side == white) {
-    if (stand_pat >= beta)
-      return beta;
+    if (stand_pat >= beta) {
+        return beta;
+    }
+    
     alpha = max(alpha, stand_pat);
 
     for (int i = 0; i<new_moves.current_index && get_move_capture(new_moves.moves[i]); i++) {
       make_move(new_moves.moves[i]);
-      int score = q_search(depth + 1, alpha, beta);
+      int score = q_search(depth + 1, alpha, beta, max_depth);
       takeback();
 
-      if (score >= beta)
-        return beta;
+      if (score >= beta) {
+          return beta;
+      }
+
       if (score > alpha)
         alpha = score;
     }
   } else {
-    if (stand_pat <= alpha)
-      return alpha;
+    if (stand_pat <= alpha) {
+        return alpha;
+    }
+
     if (stand_pat < beta)
       beta = stand_pat;
 
     for (int i = 0; i<new_moves.current_index && get_move_capture(new_moves.moves[i]); i++) {
 
       make_move(new_moves.moves[i]);
-      int score = q_search(depth + 1, alpha, beta);
+      int score = q_search(depth + 1, alpha, beta, max_depth);
       takeback();
 
-      if (score <= alpha)
-        return alpha;
+      if (score <= alpha) {
+          return alpha;
+      }
+      
       if (score < beta)
         beta = score;
     }
   }
-
+  
   return pos_side == white ? alpha : beta;
+
 }
 
-
+int hasChecks(moves *list) {
+  for (int i = 0; i < list->current_index; i++) {
+    if (get_move_check(list->moves[i])) {
+      return 1;
+    }
+  }
+  return 0;
+}
 U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
-
+  //printf("depth=%d\n", depth);
+  //show_board();
   moves new_moves = {{0},0};
   generate_moves(&new_moves);
 
@@ -121,9 +138,14 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
   if (isThreefold() == 1)
     return 0;
+  
+  if (depth > max_depth) {
+   int score = q_search(depth, alpha, beta, max_depth);
+    return score;
 
-  if (depth == max_depth) {
-    int score = q_search(depth, alpha, beta);
+  }
+  if (depth == max_depth && !isKingInCheck(pos_side) && !hasChecks(&new_moves)) {
+    int score = q_search(depth, alpha, beta, max_depth);
     return score;
   }
 

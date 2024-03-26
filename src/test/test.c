@@ -25,7 +25,7 @@ int main(void) {
   run_tests();
   
   startpos();
-  play(5);
+  play(4);
 }
 
 void run_tests() {
