@@ -139,12 +139,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   if (isThreefold() == 1)
     return 0;
   
-  if (depth > max_depth) {
-   int score = q_search(depth, alpha, beta, max_depth);
-    return score;
-
-  }
-  if (depth == max_depth && !isKingInCheck(pos_side) && !hasChecks(&new_moves)) {
+  if (depth >= max_depth && !isKingInCheck(pos_side)) {
     int score = q_search(depth, alpha, beta, max_depth);
     return score;
   }
