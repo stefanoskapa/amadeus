@@ -26,15 +26,15 @@
 #define B_P_BONUS_4 ((1ULL << a4 | 1ULL << b4 | 1ULL << c4 | 1ULL << d4 | 1ULL << e4 | 1ULL << f4 | 1ULL << g4 | 1ULL << h4))
 
 int b_king[] = {
-    5,  10,   9, -15,   0, -15,  10,   5, 
-    0, -10, -20, -20, -20, -15, -10,   0,
+  5,  10,   9, -15,   0, -15,  10,   5, 
+  0, -10, -20, -20, -20, -15, -10,   0,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40
-  };
+};
 
 int w_king[] = {
   -40, -40, -40, -40, -40, -40, -40, -40,
@@ -43,17 +43,8 @@ int w_king[] = {
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
   -40, -40, -40, -40, -40, -40, -40, -40,
-    0, -10, -20, -20, -20, -15, -10,   0,
-    5,  10,  9,  -15,   0, -15,  10,   5 
-  };
-
-int piece_value[] = { 
-  [P] = 100, [p] = -100,
-  [N] = 300, [n] = -300,
-  [B] = 310, [b] = -310,
-  [R] = 500, [r] = -500,
-  [Q] = 900, [q] = -900,
-  [K] = 9999, [k] = -9999
+  0, -10, -20, -20, -20, -15, -10,   0,
+  5,  10,  9,  -15,   0, -15,  10,   5 
 };
 
 void show_evaluation() {
@@ -73,24 +64,33 @@ void show_evaluation() {
 
 int mat_balance() {
   int sum = 0;
-  for (int i = P; i <=k; i++) 
-    sum += __builtin_popcountll(pos_pieces[i]) * piece_value[i];
+  sum += __builtin_popcountll(pos_pieces[P]) * 100;
+  sum += __builtin_popcountll(pos_pieces[N]) * 300;
+  sum += __builtin_popcountll(pos_pieces[B]) * 310;
+  sum += __builtin_popcountll(pos_pieces[R]) * 500;
+  sum += __builtin_popcountll(pos_pieces[Q]) * 900;
+
+  sum += __builtin_popcountll(pos_pieces[p]) * -100;
+  sum += __builtin_popcountll(pos_pieces[n]) * -300;
+  sum += __builtin_popcountll(pos_pieces[b]) * -310;
+  sum += __builtin_popcountll(pos_pieces[r]) * -500;
+  sum += __builtin_popcountll(pos_pieces[q]) * -900;
   return sum;
 }
 
 int king_safety() {
-  
+
   int score = 0;
   int ksquare;
   U64 bitboard;
-  
+
   if (pos_pieces[q]){ // white king score 
     ksquare = __builtin_ctzll(pos_pieces[K]);
     bitboard = get_queen_attacks(ksquare, pos_occupancies[0]);
     score -= __builtin_popcountll(bitboard);
     score += w_king[ksquare];  
   }
-  
+
   if (pos_pieces[Q]) {
     ksquare = __builtin_ctzll(pos_pieces[k]);
     bitboard = get_queen_attacks(ksquare, pos_occupancies[1]);
@@ -108,13 +108,12 @@ int development() {
   score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS);
   score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS);
   score += __builtin_popcountll(pos_pieces[p] & B_P_E7_D7);
- return score * 18;
+  return score * 18;
 }
 
 int pawn_structure() {
   int score = __builtin_popcountll(pos_pieces[P] & CENTER);
   score -= __builtin_popcountll(pos_pieces[p] & CENTER);  
-  
   score += __builtin_popcountll(pos_pieces[P] & W_P_BONUS_7);
   score -= __builtin_popcountll(pos_pieces[p] & B_P_BONUS_2);
 
