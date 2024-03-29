@@ -100,8 +100,7 @@ void parseMoves(char* input) {
     int move = 0;
     if (token != NULL) {
 
-      moves temp = {{0},0};
-      generate_moves(&temp);
+      moves temp = *generate_moves();
 
       char* result;
       for (int i = 0; i < temp.current_index; i++) {

@@ -59,8 +59,7 @@ int isThreefold() {
  */
 U64 q_search(int depth, int alpha, int beta, int max_depth) {
 
-  moves new_moves = {{0},0};
-  generate_moves(&new_moves);
+  moves new_moves = *generate_moves();
 
   if (new_moves.current_index == 0) {
     if (isKingInCheck(pos_side)) //checkmate
@@ -116,19 +115,10 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
 
 }
 
-int hasChecks(moves *list) {
-  for (int i = 0; i < list->current_index; i++) {
-    if (get_move_check(list->moves[i])) {
-      return 1;
-    }
-  }
-  return 0;
-}
 U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   //printf("depth=%d\n", depth);
   //show_board();
-  moves new_moves = {{0},0};
-  generate_moves(&new_moves);
+  moves new_moves = *generate_moves();
 
   if (new_moves.current_index == 0) {
     if (isKingInCheck(pos_side)) //checkmate
