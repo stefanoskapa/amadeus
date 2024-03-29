@@ -76,7 +76,7 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
     
     alpha = max(alpha, stand_pat);
 
-    for (int i = 0; i<new_moves.current_index && get_move_capture(new_moves.moves[i]); i++) {
+    for (int i = 0; i < new_moves.capture_count; i++) {
       make_move(new_moves.moves[i]);
       int score = q_search(depth + 1, alpha, beta, max_depth);
       takeback();
@@ -96,7 +96,7 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
     if (stand_pat < beta)
       beta = stand_pat;
 
-    for (int i = 0; i<new_moves.current_index && get_move_capture(new_moves.moves[i]); i++) {
+    for (int i = 0; i<new_moves.capture_count; i++) {
 
       make_move(new_moves.moves[i]);
       int score = q_search(depth + 1, alpha, beta, max_depth);
