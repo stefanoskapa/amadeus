@@ -107,7 +107,7 @@ void parseMoves(char* input) {
 
         move = temp.moves[i];
         result = get_move_UCI(move);
-        int j = get_move_ep(move) ? 5 : 4;
+        int j = get_move_promotion(move) ? 5 : 4;
         if (strncmp(token, result, j) == 0) {
           break;
         } 

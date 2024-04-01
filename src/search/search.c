@@ -19,7 +19,7 @@ int find_best_move(int depth) {
   if (bestMove == 0) {
     logMessage("No move selected!\n");  
   }
-
+  show_board();
   return bestMove; 
 }
 
@@ -147,9 +147,9 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
       score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
       popl(&visited);
-      //if (depth == 0) {
-      //  printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
-      //}
+    //  if (depth == 0) {
+    //    printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+    //  }
       bestEval = max(bestEval,score);
 
       if (bestEval > alpha) {
@@ -172,8 +172,8 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
       takeback();
       popl(&visited);
-      //if (depth == 0) {
-      //  printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+     // if (depth == 0) {
+     //   printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
      // }
 
       bestEval = min(bestEval, score); 
