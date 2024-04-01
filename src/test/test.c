@@ -164,6 +164,12 @@ void dont_do_this_test_4() {
 /*
   Runs into stalemate 
   https://lichess.org/wyrufcKz
+  
+  Reproducible only with UCI command:
+
+  position startpos moves e2e4 b8c6 d2d4 d7d5 e4d5 d8d5 g1e2 d5f5 c1f4 e7e5 d4e5 c6e5 d1d4 f8d6 b1c3 g8f6 c3b5 e5f3 g2f3 f5b5 f4d6 c7d6 e1c1 e8g8 d4d6 b5a5 a2a3 c8e6 d6d2 a5e5 f1g2 e6c4 e2c3 f8e8 a3a4 e5c5 f3f4 f6g4 d2d4 c5d4 d1d4 g4f2 g2b7 a8b8 h1g1 b8b7 d4c4 b7b6 f4f5 b6f6 c3b5 a7a5 h2h4 g8f8 b2b3 f6f5 b5d6 f2h3 g1d1 f5e5 d6e8 e5e8 d1d5 e8a8 d5h5 h7h6 c4c5 h3f4 c5a5 a8d8 h5b5 f4g2 h4h5 g2e3 c2c3 d8d1 c1b2 d1d2 b2a3 e3c2 a3b2 c2d4 b2c1 d2c2 c1b1 c2c3 a5a8 f8e7 a8a7 e7d6 a7a6 d4c6 b3b4 c3b3 b1a2 b3c3 a6a8 c3e3 a4a5 d6e7 a5a6 e3g3 a6a7 e7f6 b5b8 c6d4 b8c8 g3h3 c8c5 h3h2 a2a3 h2h3 a3a4 h3h2 b4b5 d4e6 c5c8 f6g5 b5b6 h2h4 a4a5 h4h1 b6b7 h1a1 a5b6 a1b1 b6c6 b1c1 c6d6 c1d1 d6e7 e6c7 b7b8q c7a8 e7f7 g5h5 f7g7 d1d7 g7f8 d7d5 b8g3 d5f5 f8e8 a8b6 a7a8q b6a8 c8a8 f5f8
+
+go depth 5
 */
 void dont_do_this_test_5() {
   printf("\n [ \"Don't do this\" Test 5 ]\n");
