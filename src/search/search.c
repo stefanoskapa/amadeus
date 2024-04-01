@@ -71,9 +71,9 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
 
   if (pos_side == white) {
     if (stand_pat >= beta) {
-        return beta;
+      return beta;
     }
-    
+
     alpha = max(alpha, stand_pat);
 
     for (int i = 0; i < new_moves.capture_count; i++) {
@@ -82,7 +82,7 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
       takeback();
 
       if (score >= beta) {
-          return beta;
+        return beta;
       }
 
       if (score > alpha)
@@ -90,7 +90,7 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
     }
   } else {
     if (stand_pat <= alpha) {
-        return alpha;
+      return alpha;
     }
 
     if (stand_pat < beta)
@@ -103,14 +103,14 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
       takeback();
 
       if (score <= alpha) {
-          return alpha;
+        return alpha;
       }
-      
+
       if (score < beta)
         beta = score;
     }
   }
-  
+
   return pos_side == white ? alpha : beta;
 
 }
@@ -120,6 +120,9 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   //show_board();
   moves new_moves = generate_moves();
 
+  int hasChecks = 0;
+
+
   if (new_moves.current_index == 0) {
     if (isKingInCheck(pos_side)) //checkmate
       return pos_side ? INT_MAX - depth : INT_MIN + depth;
@@ -128,8 +131,17 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
   if (isThreefold() == 1)
     return 0;
-  
-  if (depth >= max_depth && !isKingInCheck(pos_side)) {
+
+  if (depth >= max_depth + 5) {
+    for (int i = 0; i < new_moves.current_index; i++) {
+      if (get_move_check(new_moves.moves[i])) {
+        hasChecks = 1;
+        break;
+      }
+    }
+  }
+
+  if (depth >= max_depth && !isKingInCheck(pos_side) && !hasChecks) {
     int score = q_search(depth, alpha, beta, max_depth);
     return score;
   }
@@ -147,9 +159,9 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
       score = mini_max_ab(depth + 1, max_depth, alpha, beta);
       takeback();
       popl(&visited);
-    //  if (depth == 0) {
-    //    printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
-    //  }
+      //  if (depth == 0) {
+      //    printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+      //  }
       bestEval = max(bestEval,score);
 
       if (bestEval > alpha) {
@@ -172,9 +184,9 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
       takeback();
       popl(&visited);
-     // if (depth == 0) {
-     //   printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
-     // }
+      // if (depth == 0) {
+      //   printf("move=%s  score=%d\n",get_move_UCI(new_moves.moves[i]), score); 
+      // }
 
       bestEval = min(bestEval, score); 
 
