@@ -38,6 +38,7 @@ void run_tests() {
   dont_do_this_test_2();
   dont_do_this_test_3();
   dont_do_this_test_4();
+  dont_do_this_test_5();
 
 }
 
@@ -160,6 +161,22 @@ void dont_do_this_test_4() {
   }
 }
 
+/*
+  Runs into stalemate 
+  https://lichess.org/wyrufcKz
+*/
+void dont_do_this_test_5() {
+  printf("\n [ \"Don't do this\" Test 5 ]\n");
+  parse_fen("R3Kr2/8/7p/7k/8/6Q1/8/8 w - - 1 75");
+  show_board();
+  int move = find_best_move(5);
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "e8f8") == 0) {
+    printf("Failed :(\n");
+  } else {
+    printf("Success: Bad move avoided\n");
+  }
+}
 
 void startpos() {
   parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
