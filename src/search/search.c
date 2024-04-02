@@ -120,9 +120,6 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   //show_board();
   moves new_moves = generate_moves();
 
-  int hasChecks = 0;
-
-
   if (new_moves.current_index == 0) {
     if (isKingInCheck(pos_side)) //checkmate
       return pos_side ? INT_MAX - depth : INT_MIN + depth;
@@ -132,16 +129,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   if (isThreefold() == 1)
     return 0;
 
-  if (depth >= max_depth + 5) {
-    for (int i = 0; i < new_moves.current_index; i++) {
-      if (get_move_check(new_moves.moves[i])) {
-        hasChecks = 1;
-        break;
-      }
-    }
-  }
-
-  if (depth >= max_depth && !isKingInCheck(pos_side) && !hasChecks) {
+  if (depth >= max_depth && !isKingInCheck(pos_side)) {
     int score = q_search(depth, alpha, beta, max_depth);
     return score;
   }
