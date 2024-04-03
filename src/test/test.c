@@ -22,11 +22,15 @@ int main(void) {
   init_attack_tables();
   init_zobrist();
 
-  bench(5);
- // run_tests();
 
- // startpos();
- // play(4);
+//  find_weights();
+  //bench(5);
+  // run_tests();
+
+   startpos();
+ 
+//  show_evaluation();
+   play(5);
 }
 
 void run_tests() {
@@ -56,6 +60,65 @@ void bench(int depth) {
   printf("Time: %f ms\n", time_used);
 
 }
+void find_weights() {
+  int found;
+  for (int depth = 3; depth < 5; depth ++){
+    found = 0;
+    for (int k = 1; k < 100; k++){
+      for (int d = 1; d < 100; d++) {
+        for (int p = 1; p < 100; p++) {
+          k_weight = k;
+          d_weight = d;
+          p_weight = p;
+          if (opening_best_move_test_1_s(depth) == 1
+              && opening_best_move_test_2_s(depth) == 1
+
+          ) { // returns 
+            found = 1;
+            break; //breaks out of p
+          }
+        }
+        if (found) break; //breaks out of d
+
+      }
+      if (found) break;//breaks out of k
+    }
+
+    if (found) {
+      printf ("\nDepth %d results\n", depth);
+      printf ("k_weight=%d\n", k_weight);
+      printf ("d_weight=%d\n", d_weight);
+      printf ("p_weight=%d\n\n", p_weight);
+    } else {
+
+    printf(" Could not find weights at depth %d\n" ,depth);
+    break;
+    }
+
+  }
+}
+
+int opening_best_move_test_1_s(int depth) {
+  parse_fen("rnbqkb1r/pppppppp/8/3nP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3");
+  int move = find_best_move(depth);
+  if (strcmp(get_move_UCI(move), "d7d6") == 0)
+    return 1;
+    else
+    return 0;
+}
+
+int opening_best_move_test_2_s(int depth) {
+  parse_fen("rnbqkbnr/1ppppppp/p7/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
+  int move = find_best_move(depth);
+  if (strcmp(get_move_UCI(move), "d2d4") == 0) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+
+
 
 /* Alekhine Defense: 1.e4 Nf6 2.e5 Nd5 3.d4
    d7d6 is the most aggressive option and probably the best

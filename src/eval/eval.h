@@ -17,12 +17,15 @@
 #define B_P_BONUS_2 ((1ULL << a2 | 1ULL << b2 | 1ULL << c2 | 1ULL << d2 | 1ULL << e2 | 1ULL << f2 | 1ULL << g2 | 1ULL << h2))
 #define B_P_BONUS_3 ((1ULL << a3 | 1ULL << b3 | 1ULL << c3 | 1ULL << d3 | 1ULL << e3 | 1ULL << f3 | 1ULL << g3 | 1ULL << h3))
 #define B_P_BONUS_4 ((1ULL << a4 | 1ULL << b4 | 1ULL << c4 | 1ULL << d4 | 1ULL << e4 | 1ULL << f4 | 1ULL << g4 | 1ULL << h4))
-
+extern int p_weight;
+extern int k_weight;
+extern int d_weight;
 int evaluate();
 int king_safety();
 int development();
 int mat_balance(); 
 int pawn_structure();
+int mobility();
 int positional_score();
 void show_evaluation();
 #endif
