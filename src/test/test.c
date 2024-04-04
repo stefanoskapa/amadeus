@@ -25,12 +25,12 @@ int main(void) {
 
 //  find_weights();
   //bench(5);
-  // run_tests();
+   run_tests();
 
-   startpos();
+  // startpos();
  
 //  show_evaluation();
-   play(5);
+  // play(5);
 }
 
 void run_tests() {
@@ -60,76 +60,25 @@ void bench(int depth) {
   printf("Time: %f ms\n", time_used);
 
 }
-void find_weights() {
-  int found;
-  for (int depth = 3; depth < 5; depth ++){
-    found = 0;
-    for (int k = 1; k < 100; k++){
-      for (int d = 1; d < 100; d++) {
-        for (int p = 1; p < 100; p++) {
-          k_weight = k;
-          d_weight = d;
-          p_weight = p;
-          if (opening_best_move_test_1_s(depth) == 1
-              && opening_best_move_test_2_s(depth) == 1
-
-          ) { // returns 
-            found = 1;
-            break; //breaks out of p
-          }
-        }
-        if (found) break; //breaks out of d
-
-      }
-      if (found) break;//breaks out of k
-    }
-
-    if (found) {
-      printf ("\nDepth %d results\n", depth);
-      printf ("k_weight=%d\n", k_weight);
-      printf ("d_weight=%d\n", d_weight);
-      printf ("p_weight=%d\n\n", p_weight);
-    } else {
-
-    printf(" Could not find weights at depth %d\n" ,depth);
-    break;
-    }
-
-  }
-}
-
-int opening_best_move_test_1_s(int depth) {
-  parse_fen("rnbqkb1r/pppppppp/8/3nP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3");
-  int move = find_best_move(depth);
-  if (strcmp(get_move_UCI(move), "d7d6") == 0)
-    return 1;
-    else
-    return 0;
-}
-
-int opening_best_move_test_2_s(int depth) {
-  parse_fen("rnbqkbnr/1ppppppp/p7/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
-  int move = find_best_move(depth);
-  if (strcmp(get_move_UCI(move), "d2d4") == 0) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-
-
 
 /* Alekhine Defense: 1.e4 Nf6 2.e5 Nd5 3.d4
    d7d6 is the most aggressive option and probably the best
    move in the position:
    1) Challenges white's impressive pawn center
    2) Enables minor piece development for black
- */
+
+   From an evaluation perspective, white may be
+   a tiny bit better because the center is a long-term
+   advantage that offers also space advantage, better
+   piece positions and quick development. So white should
+   have no issues catching up in development soon.
+
+   Intuitive assesment: something between 0.30 and 0.40
+*/
 void opening_best_move_test_1() {
   printf("\n [ Opening Best Move Test 1 ]\n");
   parse_fen("rnbqkb1r/pppppppp/8/3nP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3");
-  show_board();
+  show_evaluation();
   int move = find_best_move(5);
   print_move_UCI(move);
   if (strcmp(get_move_UCI(move), "d7d6") == 0) {
@@ -149,7 +98,7 @@ void opening_best_move_test_1() {
 void opening_best_move_test_2() {
   printf("\n [ Opening Best Move Test 2 ]\n");
   parse_fen("rnbqkbnr/1ppppppp/p7/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
-  show_board();
+  show_evaluation();
   int move = find_best_move(5);
   print_move_UCI(move);
   if (strcmp(get_move_UCI(move), "d2d4") == 0) {
@@ -166,7 +115,7 @@ void opening_best_move_test_2() {
 void opening_best_move_test_3() {
   printf("\n [ Opening Best Move Test 3 ]\n");
   parse_fen("rnbqkbnr/p1pppppp/1p6/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
-  show_board();
+  show_evaluation();
   int move = find_best_move(5);
   print_move_UCI(move);
   if (strcmp(get_move_UCI(move), "d2d4") == 0) {
@@ -176,10 +125,13 @@ void opening_best_move_test_3() {
   }
 }
 
+/*
+  Black played a7a5 which is strategically unjustified.
+*/
 void dont_do_this_test_1() {
   printf("\n [ \"Don't do this\" Test 1 ]\n");
   parse_fen("r1bqk2r/ppp1bppp/2n1pn2/3p4/3P4/3BPN1P/PPPN1PP1/R1BQK2R b KQkq - 2 6");
-  show_board();
+  show_evaluation();
   int move = find_best_move(5);
   print_move_UCI(move);
   if (strcmp(get_move_UCI(move), "a7a5") == 0) {
@@ -190,12 +142,13 @@ void dont_do_this_test_1() {
 }
 
 /*
-   White sacrificed the knight on e4
+  White sacrificed the knight on e4
+  This might happen by over-estimating the pawn-center.
  */
 void dont_do_this_test_2() {
   printf("\n [ \"Don't do this\" Test 2 ]\n");
   parse_fen("2r2rk1/ppq2pp1/2n1pnp1/1B1p4/3Pp3/1PN1QP1P/P1P3P1/R4RK1 w - - 1 17");
-  show_board();
+  show_evaluation();
   int move = find_best_move(5);
   print_move_UCI(move);
   if (strcmp(get_move_UCI(move), "c3e4") == 0) {
@@ -213,7 +166,7 @@ void dont_do_this_test_2() {
 void dont_do_this_test_3() {
   printf("\n [ \"Don't do this\" Test 3 ]\n");
   parse_fen("3rk2r/ppq2pp1/2nppnp1/1B1p4/3P4/1PN1PQ1P/P1P2PP1/R3K2R w KQk - 1 13");
-  show_board();
+  show_evaluation();
   int move = find_best_move(5);
   print_move_UCI(move);
   if (strcmp(get_move_UCI(move), "e3e4") == 0) {
@@ -229,7 +182,7 @@ void dont_do_this_test_3() {
 void dont_do_this_test_4() {
   printf("\n [ \"Don't do this\" Test 4 ]\n");
   parse_fen("r1bqkbnr/pp1ppppp/2n5/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3");
-  show_board();
+  show_evaluation();
   int move = find_best_move(5);
   print_move_UCI(move);
   if (strcmp(get_move_UCI(move), "f1d3") == 0) {

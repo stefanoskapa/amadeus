@@ -8,10 +8,10 @@
 #include "../../lib/spark.h"
 #include "eval.h"
 
-int d_weight = 6;
-int k_weight = 4;
-int p_weight = 10;
-int m_weight = 14;
+int d_weight = 4;
+int k_weight = 3;
+int p_weight = 15;
+int m_weight = 3;
 
 int b_king[] = {
   5,  10,   9, -15,   0, -15,  10,   5, 
@@ -140,14 +140,14 @@ int king_safety() {
 
   if (pos_pieces[q]){ // white king score 
     ksquare = __builtin_ctzll(pos_pieces[K]);
-    bitboard = get_queen_attacks(ksquare, pos_occupancies[0]);
+    bitboard = get_queen_attacks(ksquare, pos_pieces[P]);
     score -= __builtin_popcountll(bitboard);
     score += w_king[ksquare];  
   }
 
   if (pos_pieces[Q]) {
     ksquare = __builtin_ctzll(pos_pieces[k]);
-    bitboard = get_queen_attacks(ksquare, pos_occupancies[1]);
+    bitboard = get_queen_attacks(ksquare, pos_pieces[p]);
     score += __builtin_popcountll(bitboard);
     score -= b_king[ksquare];
   }
@@ -158,24 +158,28 @@ int development() {
   int score = 0;
   score -= __builtin_popcountll(pos_pieces[N] & W_KNIGHTS);
   score -= __builtin_popcountll(pos_pieces[B] & W_BISHOPS);
-  score -= __builtin_popcountll(pos_pieces[P] & W_P_E2_D2);
+  //score -= __builtin_popcountll(pos_pieces[P] & W_P_E2_D2);
   score += __builtin_popcountll(pos_pieces[n] & B_KNIGHTS);
   score += __builtin_popcountll(pos_pieces[b] & B_BISHOPS);
-  score += __builtin_popcountll(pos_pieces[p] & B_P_E7_D7);
+  //score += __builtin_popcountll(pos_pieces[p] & B_P_E7_D7);
   return score * d_weight;
 }
 
 int pawn_structure() {
-  int score = __builtin_popcountll(pos_pieces[P] & CENTER);
-  score -= __builtin_popcountll(pos_pieces[p] & CENTER);  
-  score += __builtin_popcountll(pos_pieces[P] & W_P_BONUS_7);
-  score -= __builtin_popcountll(pos_pieces[p] & B_P_BONUS_2);
+  int wscore = 0;
+  int bscore = 0;
+  wscore = __builtin_popcountll(pos_pieces[P] & CENTER);
+  wscore *= wscore;
+  bscore = __builtin_popcountll(pos_pieces[p] & CENTER);  
+  bscore *= bscore;
+  //score += __builtin_popcountll(pos_pieces[P] & W_P_BONUS_7);
+  //score -= __builtin_popcountll(pos_pieces[p] & B_P_BONUS_2);
 
-  return score * p_weight;
+  return (wscore - bscore) * p_weight;
 }
 
 int positional_score() {
-  int score = /*development() + pawn_structure() +*/ king_safety() + mobility();
+  int score = development() + pawn_structure() + king_safety() + mobility();
   return score;
 }
 
