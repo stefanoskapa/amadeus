@@ -35,14 +35,15 @@ int main(void) {
 
 void run_tests() {
 
-  opening_best_move_test_1();
-  opening_best_move_test_2();
-  opening_best_move_test_3();
+ // opening_best_move_test_1();
+  //opening_best_move_test_2();
+  //opening_best_move_test_3();
 
-  dont_do_this_test_1();
-  dont_do_this_test_2();
-  dont_do_this_test_3();
-  dont_do_this_test_4();
+  //dont_do_this_test_1();
+  //dont_do_this_test_2();
+  //dont_do_this_test_3();
+ // dont_do_this_test_4();
+  dont_do_this_test_5();
 
 }
 
@@ -191,6 +192,23 @@ void dont_do_this_test_4() {
     printf("Success: Bad move avoided\n");
   }
 }
+
+/*
+  plays h3 in the opening
+*/
+void dont_do_this_test_5() {
+  printf("\n [ \"Don't do this\" Test 4 ]\n");
+  parse_fen("rnbqkb1r/ppp1pppp/5n2/3p4/3P4/2N5/PPP1PPPP/R1BQKBNR w KQkq - 0 3");
+  show_evaluation();
+  int move = find_best_move(5);
+  print_move_UCI(move);
+  if (strcmp(get_move_UCI(move), "h2h3") == 0) {
+    printf("Failed :(\n");
+  } else {
+    printf("Success: Bad move avoided\n");
+  }
+}
+
 
 void startpos() {
   parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");

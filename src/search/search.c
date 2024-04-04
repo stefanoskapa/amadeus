@@ -131,6 +131,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
   if (depth >= max_depth && !isKingInCheck(pos_side)) {
     int score = q_search(depth, alpha, beta, max_depth);
+    //printf(" [%d]",score);
     return score;
   }
 
@@ -139,7 +140,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   if (pos_side == white) {
     bestEval = INT_MIN;
     for (int i = 0; i<new_moves.current_index; i++) {
-      //printf("\n%*s%s", depth* 2, "", get_move_UCI(new_moves.moves[i]));
+     // printf("\n%*s%d.%s", depth* 2, "",depth+1, get_move_UCI(new_moves.moves[i]));
 
       make_move(new_moves.moves[i]);
       pushl(&visited, get_zobrist());
@@ -164,7 +165,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   } else {
     bestEval = INT_MAX;
     for (int i = 0; i < new_moves.current_index; i++) {
-      //printf("\n%*s%s", depth *2, "", get_move_UCI(new_moves.moves[i]));
+     // printf("\n%*s%d.%s", depth *2, "",depth+1, get_move_UCI(new_moves.moves[i]));
 
       make_move(new_moves.moves[i]);
       pushl(&visited, get_zobrist());

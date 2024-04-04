@@ -14,7 +14,8 @@ void dont_do_this_test_1();
 void dont_do_this_test_2();
 void dont_do_this_test_3();
 void dont_do_this_test_4();
-void bench(int depth);
+void dont_do_this_test_5();
 void run_tests();
+void bench(int depth);
 
 #endif
