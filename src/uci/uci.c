@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <math.h>
 #include "uci.h"
 #include "../../lib/spark.h"
 #include "../search/search.h"
@@ -57,9 +56,9 @@ void uci(int depth) {
       visited.index = 0;
     } else if (strncmp(line, "show",4) == 0) {
       show_board();
-      print_bitboard(pos_occupancies[0]);
-      print_bitboard(pos_occupancies[1]);
-      print_bitboard(pos_occupancies[2]);
+      PRINT_BB(pos_occupancies[0]);
+      PRINT_BB(pos_occupancies[1]);
+      PRINT_BB(pos_occupancies[2]);
     } else if (strncmp(line, "quit", 4) == 0) {
       closeLog();    
       break;
@@ -107,7 +106,7 @@ void parseMoves(char* input) {
 
         move = temp.moves[i];
         result = get_move_UCI(move);
-        int j = get_move_promotion(move) ? 5 : 4;
+        int j = GET_MOVE_PROMOTION(move) ? 5 : 4;
         if (strncmp(token, result, j) == 0) {
           break;
         } 

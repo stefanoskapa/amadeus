@@ -62,14 +62,14 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
   moves new_moves = generate_moves();
 
   if (new_moves.current_index == 0) {
-    if (isKingInCheck(pos_side)) //checkmate
+    if (IS_KING_IN_CHECK(pos_side)) //checkmate
       return pos_side ? INT_MAX - depth : INT_MIN + depth;
     return 0; //stalemate
   }
 
   int stand_pat = evaluate(); 
 
-  if (pos_side == white) {
+  if (pos_side == WHITE) {
     if (stand_pat >= beta) {
       return beta;
     }
@@ -111,7 +111,7 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
     }
   }
 
-  return pos_side == white ? alpha : beta;
+  return pos_side == WHITE ? alpha : beta;
 
 }
 
@@ -121,7 +121,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   moves new_moves = generate_moves();
 
   if (new_moves.current_index == 0) {
-    if (isKingInCheck(pos_side)) //checkmate
+    if (IS_KING_IN_CHECK(pos_side)) //checkmate
       return pos_side ? INT_MAX - depth : INT_MIN + depth;
     return 0; //stalemate
   } 
@@ -129,7 +129,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   if (isThreefold() == 1)
     return 0;
 
-  if (depth >= max_depth && !isKingInCheck(pos_side)) {
+  if (depth >= max_depth && !IS_KING_IN_CHECK(pos_side)) {
     int score = q_search(depth, alpha, beta, max_depth);
     //printf(" [%d]",score);
     return score;
@@ -137,7 +137,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
 
   int bestMove = 0;
   int bestEval, score;
-  if (pos_side == white) {
+  if (pos_side == WHITE) {
     bestEval = INT_MIN;
     for (int i = 0; i<new_moves.current_index; i++) {
      // printf("\n%*s%d.%s", depth* 2, "",depth+1, get_move_UCI(new_moves.moves[i]));

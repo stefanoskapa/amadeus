@@ -61,8 +61,8 @@ int mobility() {
   bitboard = pos_pieces[N];
   while (bitboard) {
     source = __builtin_ctzll(bitboard);
-    attacks = knight_attacks[source] & (~pos_occupancies[white]); // don't capture own pieces
-    clear_bit(bitboard, source);
+    attacks = knight_attacks[source] & (~pos_occupancies[WHITE]); // don't capture own pieces
+    CLEAR_BIT(bitboard, source);
     score += __builtin_popcountll(attacks);
   }
   
@@ -71,8 +71,8 @@ int mobility() {
   bitboard = pos_pieces[n];
   while (bitboard) {
     source = __builtin_ctzll(bitboard);
-    attacks = knight_attacks[source] & (~pos_occupancies[black]); // don't capture own pieces
-    clear_bit(bitboard, source);
+    attacks = knight_attacks[source] & (~pos_occupancies[BLACK]); // don't capture own pieces
+    CLEAR_BIT(bitboard, source);
     score -= __builtin_popcountll(attacks);
   }
  
@@ -80,34 +80,34 @@ int mobility() {
   //white bishops
   bitboard = pos_pieces[B];
   while (bitboard) {
-    source = first_set_bit(bitboard);
-    attacks = get_bishop_attacks(source, pos_occupancies[both]) & (~pos_occupancies[white]); // don't capture own pieces
-    clear_bit(bitboard, source);
+    source = FIRST_SET_BIT(bitboard);
+    attacks = get_bishop_attacks(source, pos_occupancies[BOTH]) & (~pos_occupancies[WHITE]); // don't capture own pieces
+    CLEAR_BIT(bitboard, source);
     score += __builtin_popcountll(attacks);
   }
   //black bishops
   bitboard = pos_pieces[b];
   while (bitboard) {
-    source = first_set_bit(bitboard);
-    attacks = get_bishop_attacks(source, pos_occupancies[both]) & (~pos_occupancies[black]); // don't capture own pieces
-    clear_bit(bitboard, source);
+    source = FIRST_SET_BIT(bitboard);
+    attacks = get_bishop_attacks(source, pos_occupancies[BOTH]) & (~pos_occupancies[BLACK]); // don't capture own pieces
+    CLEAR_BIT(bitboard, source);
     score -= __builtin_popcountll(attacks);
   }
 
   //white rooks
   bitboard = pos_pieces[R];
   while (bitboard) {
-    source = first_set_bit(bitboard);
-    attacks = get_rook_attacks(source, pos_occupancies[both]) & (~pos_occupancies[white]); // don't capture own pieces
-    clear_bit(bitboard, source);
+    source = FIRST_SET_BIT(bitboard);
+    attacks = get_rook_attacks(source, pos_occupancies[BOTH]) & (~pos_occupancies[WHITE]); // don't capture own pieces
+    CLEAR_BIT(bitboard, source);
     score += __builtin_popcountll(attacks);
   }
   //black rooks
   bitboard = pos_pieces[r];
   while (bitboard) {
-    source = first_set_bit(bitboard);
-    attacks = get_rook_attacks(source, pos_occupancies[both]) & (~pos_occupancies[black]); // don't capture own pieces
-    clear_bit(bitboard, source);
+    source = FIRST_SET_BIT(bitboard);
+    attacks = get_rook_attacks(source, pos_occupancies[BOTH]) & (~pos_occupancies[BLACK]); // don't capture own pieces
+    CLEAR_BIT(bitboard, source);
     score -= __builtin_popcountll(attacks);
   }
   

@@ -1,10 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
 #include <string.h>
 #include <time.h>
-#include <math.h>
-#include "../uci/uci.h"
 #include "../../lib/spark.h"
 #include "../eval/eval.h"
 #include "../search/search.h"
