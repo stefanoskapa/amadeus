@@ -20,8 +20,8 @@ int main(void) {
 
 
 //  find_weights();
-  //bench(5);
-   run_tests();
+   bench(6);
+   //run_tests();
 
   // startpos();
  
@@ -43,6 +43,11 @@ void run_tests() {
 
 }
 
+
+/*
+  18/4/2024: 60930 ms
+
+*/
 void bench(int depth) {
   printf("Analysing position with depth %d\n", depth);
   parse_fen("3rk2r/ppq2pp1/2nppnp1/1B1p4/3P4/1PN1PQ1P/P1P2PP1/R3K2R w KQk - 1 13");

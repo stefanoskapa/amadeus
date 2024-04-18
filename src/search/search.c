@@ -32,14 +32,9 @@ int isThreefold() {
   if (visited.index == 0)
     return 0;
   U64 last = visited.items[visited.index - 1];
-  int count = 0;
   for (int i = 0; i < visited.index - 1; i++) {
     if(visited.items[i] == last) {
-      count++;
-    }
-
-    if (count == 2) {
-      return 1; // threefold repetition detected
+      return 1;
     }
   }
   return 0;
