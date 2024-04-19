@@ -121,7 +121,7 @@ U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
     return 0; //stalemate
   } 
 
-  if (isThreefold() == 1)
+  if (isThreefold() == 1 && depth != 0)
     return 0;
 
   if (depth >= max_depth && !IS_KING_IN_CHECK(pos_side)) {
