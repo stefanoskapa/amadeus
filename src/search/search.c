@@ -14,7 +14,7 @@
 long_stack visited = {{0},0};
 
 int find_best_move(int depth) {
-  U64 moveEval = minimax(depth);
+  BB moveEval = minimax(depth);
   int bestMove = UNPACK_MOVE(moveEval);
   if (bestMove == 0) {
     logMessage("No move selected!\n");  
@@ -23,7 +23,7 @@ int find_best_move(int depth) {
   return bestMove; 
 }
 
-U64 minimax(int max_depth) {
+BB minimax(int max_depth) {
   return mini_max_ab(0, max_depth, INT_MIN, INT_MAX);
 }
 
@@ -31,7 +31,7 @@ U64 minimax(int max_depth) {
 int isThreefold() {
   if (visited.index == 0)
     return 0;
-  U64 last = visited.items[visited.index - 1];
+  BB last = visited.items[visited.index - 1];
   for (int i = 0; i < visited.index - 1; i++) {
     if(visited.items[i] == last) {
       return 1;
@@ -52,9 +52,9 @@ int isThreefold() {
    calls.
 
  */
-U64 q_search(int depth, int alpha, int beta, int max_depth) {
+BB q_search(int depth, int alpha, int beta, int max_depth) {
 
-  moves new_moves = generate_moves();
+  MoveList new_moves = generate_moves();
 
   if (new_moves.current_index == 0) {
     if (IS_KING_IN_CHECK(pos_side)) //checkmate
@@ -110,10 +110,10 @@ U64 q_search(int depth, int alpha, int beta, int max_depth) {
 
 }
 
-U64 mini_max_ab(int depth,int max_depth, int alpha, int beta) {
+BB mini_max_ab(int depth,int max_depth, int alpha, int beta) {
   //printf("depth=%d\n", depth);
   //show_board();
-  moves new_moves = generate_moves();
+  MoveList new_moves = generate_moves();
 
   if (new_moves.current_index == 0) {
     if (IS_KING_IN_CHECK(pos_side)) //checkmate
@@ -199,7 +199,7 @@ int min(int a, int b) {
   return (a < b) ? a : b;
 }
 
-void pushl(long_stack *is, U64 item) { 
+void pushl(long_stack *is, BB item) { 
   if (is->index > 600) {
     printf("Too many moves, stack full\n");
     exit(1);
@@ -208,7 +208,7 @@ void pushl(long_stack *is, U64 item) {
 
 }
 
-U64 popl(long_stack *is) {
+BB popl(long_stack *is) {
   is->index--;
   return is->items[is->index];
 }
@@ -216,6 +216,6 @@ U64 popl(long_stack *is) {
 void show_stackl(long_stack *is) {
   printf("Stack contents\n");
   for (int i = 0; i < is->index; i++) {
-    printf("%llu\n", is->items[i]);
+    printf("%lu\n", is->items[i]);
   }
 }

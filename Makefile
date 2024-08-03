@@ -14,7 +14,7 @@ TEST_OBJ := $(TEST_SRC:.c=.o)
 
 SPARK_REPO := https://github.com/stefanoskapa/spark.git
 SPARK_DIR := external/spark
-SPARK_LIB := $(SPARK_DIR)/build/spark.a
+SPARK_LIB := $(SPARK_DIR)/bin/spark.a
 SPARK_INCLUDE_DIR := lib
 
 
@@ -47,7 +47,7 @@ spark:
 	fi	
 	$(MAKE) -C $(SPARK_DIR)
 	cp $(SPARK_LIB) lib/
-	cp $(SPARK_DIR)/spark.h $(SPARK_INCLUDE_DIR)/
+	cp $(SPARK_DIR)/inc/spark.h $(SPARK_INCLUDE_DIR)/
 
 # Clean Rule
 clean:

@@ -54,14 +54,14 @@ void show_evaluation() {
 
 int mobility() {
   int score = 0;
-  U64 bitboard, attacks;
+  BB bitboard, attacks;
   int source;
 
   //white knights
   bitboard = pos_pieces[N];
   while (bitboard) {
     source = __builtin_ctzll(bitboard);
-    attacks = knight_attacks[source] & (~pos_occupancies[WHITE]); // don't capture own pieces
+    attacks = get_knight_attacks(source) & (~pos_occupancies[WHITE]); // don't capture own pieces
     CLEAR_BIT(bitboard, source);
     score += __builtin_popcountll(attacks);
   }
@@ -71,7 +71,7 @@ int mobility() {
   bitboard = pos_pieces[n];
   while (bitboard) {
     source = __builtin_ctzll(bitboard);
-    attacks = knight_attacks[source] & (~pos_occupancies[BLACK]); // don't capture own pieces
+    attacks = get_knight_attacks(source) & (~pos_occupancies[BLACK]); // don't capture own pieces
     CLEAR_BIT(bitboard, source);
     score -= __builtin_popcountll(attacks);
   }
@@ -136,7 +136,7 @@ int king_safety() {
 
   int score = 0;
   int ksquare;
-  U64 bitboard;
+  BB bitboard;
 
   if (pos_pieces[q]){ // white king score 
     ksquare = __builtin_ctzll(pos_pieces[K]);

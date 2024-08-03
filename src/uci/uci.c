@@ -56,9 +56,9 @@ void uci(int depth) {
       visited.index = 0;
     } else if (strncmp(line, "show",4) == 0) {
       show_board();
-      PRINT_BB(pos_occupancies[0]);
-      PRINT_BB(pos_occupancies[1]);
-      PRINT_BB(pos_occupancies[2]);
+      //PRINT_BB(pos_occupancies[0]);
+      //PRINT_BB(pos_occupancies[1]);
+      //PRINT_BB(pos_occupancies[2]);
     } else if (strncmp(line, "quit", 4) == 0) {
       closeLog();    
       break;
@@ -99,7 +99,7 @@ void parseMoves(char* input) {
     int move = 0;
     if (token != NULL) {
 
-      moves temp = generate_moves();
+      MoveList temp = generate_moves();
 
       char* result;
       for (int i = 0; i < temp.current_index; i++) {
